@@ -5,12 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace Domain.Entities;
 
-public sealed class StringExpression
+public sealed class ArithmeticExpression
 {
 
     public string ExpresionString { get; private set; }
 
-    public StringExpression(string expressionString)
+    public ArithmeticExpression(string expressionString)
     {
         Validate(expressionString);
         ExpresionString = expressionString;
@@ -18,7 +18,7 @@ public sealed class StringExpression
 
     private void Validate(string expressionString)
     {
-        if (expressionString == null || expressionString.Trim().Equals(string.Empty))
+        if (expressionString is null || expressionString.Trim().Equals(string.Empty))
         {
             throw new DomainException(ValidationResources.ResourceManager.GetString("Null_Or_Empty_String"));
         }

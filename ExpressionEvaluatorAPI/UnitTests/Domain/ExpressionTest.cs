@@ -13,7 +13,7 @@ public class ExpressionTest
     {
         string data = "1+1+1";
 
-        StringExpression expression = new StringExpression(data);
+        ArithmeticExpression expression = new ArithmeticExpression(data);
 
         Assert.NotNull(expression);
         Assert.Equal(data, expression.ExpresionString);
@@ -28,7 +28,7 @@ public class ExpressionTest
     [InlineData("       ")] //Tabs
     public void IsNullOrEmptyString(string? data)
     {
-        Action action = () => { new StringExpression(data); };
+        Action action = () => { new ArithmeticExpression(data); };
 
         var exception = Assert.Throws<DomainException>(action);
 
@@ -49,7 +49,7 @@ public class ExpressionTest
     [InlineData("1+1!2")] //Tabs
     public void ContainsInvalidCharacters(string? data)
     {
-        Action action = () => { new StringExpression(data); };
+        Action action = () => { new ArithmeticExpression(data); };
 
         var exception = Assert.Throws<DomainException>(action);
 
@@ -72,7 +72,7 @@ public class ExpressionTest
     [InlineData("1-2+-")]
     public void ContainsSequentialOperators(string? data)
     {
-        Action action = () => { new StringExpression(data); };
+        Action action = () => { new ArithmeticExpression(data); };
 
         var exception = Assert.Throws<DomainException>(action);
 
@@ -95,7 +95,7 @@ public class ExpressionTest
     [InlineData("+1-2-")]
     public void StartsOrEndsWithOperators(string? data)
     {
-        Action action = () => { new StringExpression(data); };
+        Action action = () => { new ArithmeticExpression(data); };
 
         var exception = Assert.Throws<DomainException>(action);
 
@@ -114,7 +114,7 @@ public class ExpressionTest
     [InlineData("12345")]
     public void ContainsOnlyDigits(string? data)
     {
-        Action action = () => { new StringExpression(data); };
+        Action action = () => { new ArithmeticExpression(data); };
 
         var exception = Assert.Throws<DomainException>(action);
 
@@ -123,7 +123,6 @@ public class ExpressionTest
         Assert.Equal(ValidationResources.ResourceManager.GetString("Contains_Only_Digits"), exception.Message);
 
     }
-
 
 }
 
