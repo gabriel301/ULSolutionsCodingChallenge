@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Shared.RegexPatterns;
 using Shared.ReShared.Resources.Validationsoures.Validation;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Domain.Entities.Expression;
 public class ExpressionTree : IExpressionTree, IDisposable
@@ -95,19 +96,26 @@ public class ExpressionTree : IExpressionTree, IDisposable
             if (matches.Count == 0)
             {
                 matches = Regex.Matches(expressionToEvaluate, TreeBuildingPatterns.CONTAINS_ONLY_MULTIPLICATION_OR_DIVISION);
-            }
+             }
 
             nodeType = NodeTypeEnum.Operator;
 
             rootNode = matches.LastOrDefault();
-            Node operatorNode = new Node(rootNode!.Value, nodeType);
+                 Node operatorNode = new Node(rootNode!.Value, nodeType);
             this._nodes.Add(operatorNode);
             var parentOperatorNode = nodeStack.Pop();
 
             operatorNode.SetParent(parentOperatorNode);
-            parentOperatorNode.SetLeftChild(operatorNode);
-            _nodes.Add(operatorNode);
-            nodeStack.Push(parentOperatorNode);
+            if (!parentOperatorNode.HasLeftChild())
+            {
+                parentOperatorNode.SetLeftChild(operatorNode);
+                nodeStack.Push(parentOperatorNode);
+            }
+            else if (!parentOperatorNode.HasRightChild())
+            {
+                parentOperatorNode.SetRightChild(operatorNode);
+            }
+
             nodeStack.Push(operatorNode);
 
             var originalExpression = expressionToEvaluate;
