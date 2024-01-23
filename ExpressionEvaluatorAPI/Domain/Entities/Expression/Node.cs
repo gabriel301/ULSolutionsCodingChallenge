@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Domain.Entities.Expression;
- public class Node
+ public class Node : IDisposable
 {
     public Node? ParentNode { get; private set; }
     public Node? LeftChild { get; private set; }
@@ -14,6 +15,8 @@ namespace Domain.Entities.Expression;
 
     public string Value { get; private set; } = string.Empty;
     public NodeTypeEnum Type { get; private set; }
+
+    private bool disposed = false;
 
     public Node(string value, NodeTypeEnum type) 
     {
@@ -60,5 +63,31 @@ namespace Domain.Entities.Expression;
         return RightChild != null;
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposed)
+        {
+            if (disposing)
+            {
+                ParentNode = null;
+                LeftChild = null;
+                RightChild = null;
+                Value = string.Empty;
+            }
+            disposed = true;
+        }
+
+    }
+
+    //Destructor
+    ~Node()
+    {
+        Dispose(false);
+    }
 }

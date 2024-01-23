@@ -123,6 +123,9 @@
   <data name="Contains_Only_Digits" xml:space="preserve">
     <value>A string de entrada deve conter uma expressão aritimética.</value>
   </data>
+  <data name="Expression_Tree_Null" xml:space="preserve">
+    <value>A instância da Expression Tree não pode ser nula.</value>
+  </data>
   <data name="Invalid_Characters" xml:space="preserve">
     <value>A string de entrada deve conter somente dígitos e operadores aritiméticos (+ - / *) e não pode conter espaços.</value>
   </data>

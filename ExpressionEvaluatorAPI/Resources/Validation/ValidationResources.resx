@@ -123,6 +123,9 @@
   <data name="Contains_Only_Digits" xml:space="preserve">
     <value>Input string must contain an arithmetic expression.</value>
   </data>
+  <data name="Expression_Tree_Null" xml:space="preserve">
+    <value>Expression Tree instance cannot be null.</value>
+  </data>
   <data name="Invalid_Characters" xml:space="preserve">
     <value>Input string must contain only digits and arithmetic operators (+ - / *).= and cannot contain spaces.</value>
   </data>

@@ -26,7 +26,6 @@ public class ExpressionTree : IExpressionTree, IDisposable
 
     private void Build()
     {
-        //Setting Root
         MatchCollection matches;
 
         Stack<String> expressionStack = new Stack<String>();
@@ -134,7 +133,6 @@ public class ExpressionTree : IExpressionTree, IDisposable
 
     }
 
-
     public static ExpressionTree Create(string expression)
     {
 
@@ -143,7 +141,6 @@ public class ExpressionTree : IExpressionTree, IDisposable
         return tree;
 
     }
-
 
     private void Validate(string expressionString)
     {
@@ -191,10 +188,9 @@ public class ExpressionTree : IExpressionTree, IDisposable
         {
             if (disposing)
             {
-                // Free any other managed objects here
                 foreach (var item in _nodes)
                 {
-                    item.Clear();
+                    item.Dispose();
                 }
                 _nodes.Clear();
             }

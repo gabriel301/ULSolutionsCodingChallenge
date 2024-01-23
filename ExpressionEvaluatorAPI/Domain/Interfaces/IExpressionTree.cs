@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Interfaces;
-public interface IExpressionTree
+public interface IExpressionTree : IDisposable
 {
     public double Evaluate();
 }

@@ -79,6 +79,15 @@ namespace Shared.ReShared.Resources.Validationsoures.Validation {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Expression Tree instance cannot be null..
+        /// </summary>
+        public static string Expression_Tree_Null {
+            get {
+                return ResourceManager.GetString("Expression_Tree_Null", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Input string must contain only digits and arithmetic operators (+ - / *).= and cannot contain spaces..
         /// </summary>
         public static string Invalid_Characters {

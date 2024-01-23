@@ -32,6 +32,20 @@ public class ArithmeticExpressionTest
     }
 
 
+    [Fact(DisplayName = nameof(ExpressionTreeNull))]
+    [Trait("Domain", "StringExpression")]
+    public void ExpressionTreeNull()
+    {
+
+        string data = "1+1+1";
+
+        Action action = () => { ArithmeticExpression.Create(data, null); };
+
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Expression_Tree_Null);
+
+        action.Should().Throw<DomainException>().Which.Expression.Should().Be(string.Empty);
+    }
+
     [Theory(DisplayName = nameof(IsNullOrEmptyString))]
     [Trait("Domain", "StringExpression")]
     [InlineData(null)]
@@ -42,7 +56,7 @@ public class ArithmeticExpressionTest
     {
         Action action = () => { ArithmeticExpression.Create(data, _expressionFixture.GetExpressionTreeSubstitute()); };
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.ResourceManager.GetString("Null_Or_Empty_String"));
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Null_Or_Empty_String);
 
         action.Should().Throw<DomainException>().Which.Expression.Should().Be(string.Empty);
     }
@@ -62,7 +76,7 @@ public class ArithmeticExpressionTest
 
         var exception = Assert.Throws<DomainException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.ResourceManager.GetString("Invalid_Characters"));
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Invalid_Characters);
 
         action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
     }
@@ -85,7 +99,7 @@ public class ArithmeticExpressionTest
         var exception = Assert.Throws<DomainException>(action);
 
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.ResourceManager.GetString("Consecutive_Operators"));
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Consecutive_Operators);
         action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
     }
 
@@ -106,7 +120,7 @@ public class ArithmeticExpressionTest
 
         var exception = Assert.Throws<DomainException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.ResourceManager.GetString("Starts_Or_Ends_With_Operator"));
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Starts_Or_Ends_With_Operator);
         action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
 
     }
@@ -124,7 +138,7 @@ public class ArithmeticExpressionTest
 
         var exception = Assert.Throws<DomainException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.ResourceManager.GetString("Contains_Only_Digits"));
+        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Contains_Only_Digits);
         action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
 
     }
