@@ -3,6 +3,8 @@ using Domain.Enumeration;
 using Domain.Events.ExpressionTree.Created;
 using Domain.Events.ExpressionTree.Evaluated;
 using Domain.Exceptions;
+using Domain.Exceptions.ExpressionTree;
+using Domain.Resources;
 using Shared.RegexPatterns;
 using Shared.ReShared.Resources.Validationsoures.Validation;
 using System.Text.RegularExpressions;
@@ -195,7 +197,13 @@ public class ExpressionTree : Entity, IExpressionTree, IDisposable
                 double operand2 = operandStack.Pop();
                 double operand1 = operandStack.Pop();
                 string arithmeticOperator = operatorStack.Pop();
-                operandStack.Push(PerformOperation(arithmeticOperator, operand1, operand2));
+                double operatonResult = PerformOperation(arithmeticOperator, operand1, operand2);
+
+                if (double.IsInfinity(operatonResult))
+                {
+                    throw new ExpressionTreeEvaluationException(this.Expression, ExpressionTreeEvaluationExpectionResource.Infinity_Value);
+                }
+                operandStack.Push(operatonResult);
             }
 
             if (currentNode.LeftChild != null && !visitedNodes.Contains(currentNode.LeftChild))

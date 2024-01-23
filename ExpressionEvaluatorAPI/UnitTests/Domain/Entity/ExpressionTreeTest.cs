@@ -1,6 +1,8 @@
 ﻿using Domain.Entities.Expression;
 using Domain.Events.ExpressionTree.Created;
 using Domain.Exceptions;
+using Domain.Exceptions.ExpressionTree;
+using Domain.Resources;
 using FluentAssertions;
 using Shared.ReShared.Resources.Validationsoures.Validation;
 
@@ -8,6 +10,16 @@ namespace UnitTests.Domain.Entity;
 public class ExpressionTreeTest
 {
 
+    public static TheoryData<string> InfinityValues =>
+        new TheoryData<string>
+        {
+            "1/0",
+            $"{double.MaxValue.ToString("0.#")}+{double.MaxValue.ToString("0.#")}"
+            
+        };
+
+    
+    
     [Fact(DisplayName = nameof(Instantiate))]
     [Trait("Domain", "ExpressionTree")]
     public void Instantiate()
@@ -145,8 +157,25 @@ public class ExpressionTreeTest
         ExpressionTree tree = ExpressionTree.Create(data);
 
         double result = tree.Evaluate();
+        tree.Dispose();
 
         result.Should().BeApproximately(expectedResult, 0.0001);
 
+    }
+
+
+    [Theory(DisplayName = nameof(EvaluateExpressionInfinity))]
+    [Trait("Domain", "ExpressionTree")]
+    [MemberData(nameof(InfinityValues))]
+    public void EvaluateExpressionInfinity(string data)
+    {
+
+        var tree = ExpressionTree.Create(data);
+        Action action = () => { tree.Evaluate(); };
+
+        var exception = Assert.Throws<ExpressionTreeEvaluationException>(action);
+
+        action.Should().Throw<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExpectionResource.Infinity_Value);
+        action.Should().Throw<ExpressionTreeEvaluationException>().Which.Expression.Should().Be(data);
     }
 }
