@@ -1,14 +1,11 @@
 ﻿using Domain.Enumeration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Domain.Entities.Expression;
- public class Node : IDisposable
+public class Node : IDisposable, IEquatable<Node>
 {
+
+    private Guid _id;
+
     public Node? ParentNode { get; private set; }
     public Node? LeftChild { get; private set; }
     public Node? RightChild { get; private set; }
@@ -18,13 +15,14 @@ namespace Domain.Entities.Expression;
 
     private bool disposed = false;
 
-    public Node(string value, NodeTypeEnum type) 
+    public Node(string value, NodeTypeEnum type)
     {
+        _id = Guid.NewGuid();
         Value = value;
         Type = type;
     }
 
-    public void Clear() 
+    public void Clear()
     {
         ParentNode = null;
         LeftChild = null;
@@ -33,7 +31,7 @@ namespace Domain.Entities.Expression;
     }
 
 
-    public void SetParent(Node? parent) 
+    public void SetParent(Node? parent)
     {
         this.ParentNode = parent;
     }
@@ -48,7 +46,7 @@ namespace Domain.Entities.Expression;
         this.RightChild = child;
     }
 
-    public bool HasParent() 
+    public bool HasParent()
     {
         return ParentNode != null;
     }
@@ -83,6 +81,18 @@ namespace Domain.Entities.Expression;
             disposed = true;
         }
 
+    }
+
+    public bool Equals(Node? other)
+    {
+        if (other == null || object.Equals(other, default)) return false;
+
+        return this._id!.Equals(other._id);
+    }
+
+    public override int GetHashCode()
+    {
+        return _id.GetHashCode();
     }
 
     //Destructor

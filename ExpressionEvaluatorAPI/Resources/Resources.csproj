@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="GlobalResources.resx" />
+    <EmbeddedResource Remove="Validation\ValidationResources.pt-br.resx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,11 +36,6 @@
       <CustomToolNamespace>Shared.ReShared.Resources.Validationsoures.Validation</CustomToolNamespace>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ValidationResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Validation\ValidationResources.pt-br.resx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <CustomToolNamespace>Shared.Resources.Validation</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
 

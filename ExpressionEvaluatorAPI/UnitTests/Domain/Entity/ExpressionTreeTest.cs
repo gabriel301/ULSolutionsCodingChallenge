@@ -1,12 +1,8 @@
 ﻿using Domain.Entities.Expression;
+using Domain.Events.ExpressionTree.Created;
 using Domain.Exceptions;
 using FluentAssertions;
 using Shared.ReShared.Resources.Validationsoures.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTests.Domain.Entity;
 public class ExpressionTreeTest
@@ -22,7 +18,10 @@ public class ExpressionTreeTest
         ExpressionTree tree = ExpressionTree.Create(data);
 
         tree.Should().NotBeNull();
+        tree.GetNodeCount().Should().Be(data.Length);
         tree.Expression.Should().Be(data);
+        tree.GetDomainEvents().Should().HaveCount(1);
+        tree.GetDomainEvents().Select(domainEvent => domainEvent).First().Should().BeOfType<ExpressionTreeCreatedEvent>();
         tree.Dispose();
     }
 
@@ -37,9 +36,9 @@ public class ExpressionTreeTest
     {
         Action action = () => { ExpressionTree.Create(data); };
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Null_Or_Empty_String);
+        action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Null_Or_Empty_String);
 
-        action.Should().Throw<DomainException>().Which.Expression.Should().Be(string.Empty);
+        action.Should().Throw<DomainValidationException>().Which.Expression.Should().Be(string.Empty);
     }
 
 
@@ -50,16 +49,16 @@ public class ExpressionTreeTest
     [InlineData("1.1+2+3")]
     [InlineData("1 + 1")] //Spaces
     [InlineData("1  +1")] //Tabs
-    [InlineData("1+1!2")] //Tabs
+    [InlineData("1+1!2")]
     public void ContainsInvalidCharacters(string? data)
     {
         Action action = () => { ExpressionTree.Create(data); };
 
-        var exception = Assert.Throws<DomainException>(action);
+        var exception = Assert.Throws<DomainValidationException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Invalid_Characters);
+        action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Invalid_Characters);
 
-        action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
+        action.Should().Throw<DomainValidationException>().Which.Expression.Should().Be(data);
     }
 
 
@@ -77,11 +76,11 @@ public class ExpressionTreeTest
     {
         Action action = () => { ExpressionTree.Create(data); };
 
-        var exception = Assert.Throws<DomainException>(action);
+        var exception = Assert.Throws<DomainValidationException>(action);
 
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Consecutive_Operators);
-        action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
+        action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Consecutive_Operators);
+        action.Should().Throw<DomainValidationException>().Which.Expression.Should().Be(data);
     }
 
 
@@ -95,14 +94,18 @@ public class ExpressionTreeTest
     [InlineData("1+2*")]
     [InlineData("1-2/")]
     [InlineData("+1-2-")]
+    [InlineData("-")]
+    [InlineData("+")]
+    [InlineData("/")]
+    [InlineData("*")]
     public void StartsOrEndsWithOperators(string? data)
     {
         Action action = () => { ExpressionTree.Create(data); };
 
-        var exception = Assert.Throws<DomainException>(action);
+        var exception = Assert.Throws<DomainValidationException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Starts_Or_Ends_With_Operator);
-        action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
+        action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Starts_Or_Ends_With_Operator);
+        action.Should().Throw<DomainValidationException>().Which.Expression.Should().Be(data);
 
     }
 
@@ -117,10 +120,33 @@ public class ExpressionTreeTest
     {
         Action action = () => { ExpressionTree.Create(data); };
 
-        var exception = Assert.Throws<DomainException>(action);
+        var exception = Assert.Throws<DomainValidationException>(action);
 
-        action.Should().Throw<DomainException>().WithMessage(ValidationResources.Contains_Only_Digits);
-        action.Should().Throw<DomainException>().Which.Expression.Should().Be(data);
+        action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Contains_Only_Digits);
+        action.Should().Throw<DomainValidationException>().Which.Expression.Should().Be(data);
+
+    }
+
+
+    [Theory(DisplayName = nameof(EvaluateExpression))]
+    [Trait("Domain", "ExpressionTree")]
+    [InlineData("4+5*2", 14.0)]
+    [InlineData("4+5/2", 6.5)]
+    [InlineData("4+5/2-1", 5.5)]
+    [InlineData("1+1+1", 3.0)]
+    [InlineData("1+2/3+4*5", 21.6666666)]
+    [InlineData("1/2+3*4", 12.5)]
+    [InlineData("1/2+3+4*5", 23.5)]
+    [InlineData("1/2/6/34554+243-908/3453-1344*465767+134565/23454*1245-13243-344565+566754/54365*2342-324344*4543+45345-56564", -2099822865.897338533165544)]
+    [InlineData("1231/6546+657657-442*7867/234+65767-242+657-2342*675/342", 704356.93074383)]
+
+    public void EvaluateExpression(string? data, double expectedResult)
+    {
+        ExpressionTree tree = ExpressionTree.Create(data);
+
+        double result = tree.Evaluate();
+
+        result.Should().BeApproximately(expectedResult, 0.0001);
 
     }
 }

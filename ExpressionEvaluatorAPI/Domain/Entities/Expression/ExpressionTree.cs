@@ -1,19 +1,22 @@
-﻿using Domain.Enumeration;
+﻿using Domain.Entities.Abstraction;
+using Domain.Enumeration;
+using Domain.Events.ExpressionTree.Created;
+using Domain.Events.ExpressionTree.Evaluated;
 using Domain.Exceptions;
-using Domain.Interfaces;
 using Shared.RegexPatterns;
 using Shared.ReShared.Resources.Validationsoures.Validation;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace Domain.Entities.Expression;
-public class ExpressionTree : IExpressionTree, IDisposable
+public class ExpressionTree : Entity, IExpressionTree, IDisposable
 {
 
     private List<Node> _nodes = new List<Node>();
     private Node _root;
     private bool disposed = false;
+    private bool isEvaluated = false;
     public string Expression { get; private set; }
+    public double Evaluation { get; private set; }
 
 
     private ExpressionTree(string expression)
@@ -59,16 +62,16 @@ public class ExpressionTree : IExpressionTree, IDisposable
         while (expressionStack.Count > 0)
         {
 
-            if (expressionToEvaluate.Equals(string.Empty)) 
+            if (expressionToEvaluate.Equals(string.Empty))
             {
                 expressionToEvaluate = expressionStack.Pop();
             }
             nodeType = NodeTypeEnum.Operand;
             matches = Regex.Matches(expressionToEvaluate, TreeBuildingPatterns.CONTAINS_ONLY_DIGITS);
 
-            if (matches.Count > 0) 
+            if (matches.Count > 0)
             {
-                rootNode = matches.LastOrDefault(); //Se tiver mais em digito, pega todos?
+                rootNode = matches.LastOrDefault();
                 Node node = new Node(rootNode!.Value, nodeType);
                 this._nodes.Add(node);
                 var parentNode = nodeStack.Pop();
@@ -78,7 +81,7 @@ public class ExpressionTree : IExpressionTree, IDisposable
                     parentNode.SetLeftChild(node);
                     nodeStack.Push(parentNode);
                 }
-                else if (!parentNode.HasRightChild()) 
+                else if (!parentNode.HasRightChild())
                 {
                     parentNode.SetRightChild(node);
                 }
@@ -95,12 +98,12 @@ public class ExpressionTree : IExpressionTree, IDisposable
             if (matches.Count == 0)
             {
                 matches = Regex.Matches(expressionToEvaluate, TreeBuildingPatterns.CONTAINS_ONLY_MULTIPLICATION_OR_DIVISION);
-             }
+            }
 
             nodeType = NodeTypeEnum.Operator;
 
             rootNode = matches.LastOrDefault();
-                 Node operatorNode = new Node(rootNode!.Value, nodeType);
+            Node operatorNode = new Node(rootNode!.Value, nodeType);
             this._nodes.Add(operatorNode);
             var parentOperatorNode = nodeStack.Pop();
 
@@ -138,44 +141,128 @@ public class ExpressionTree : IExpressionTree, IDisposable
 
         ExpressionTree tree = new ExpressionTree(expression);
 
+        ExpressionTreeCreatedEventData eventData = new ExpressionTreeCreatedEventData(tree.Expression);
+
+        ExpressionTreeCreatedEvent domainEvent = new ExpressionTreeCreatedEvent(eventData);
+
+        tree.AddDomainEvent(domainEvent);
+
         return tree;
 
     }
+
+    public double Evaluate()
+    {
+        if (!isEvaluated)
+        {
+            Evaluation = DFS();
+            isEvaluated = true;
+            ExpressionTreeEvaluatedEventData eventData = new ExpressionTreeEvaluatedEventData(this.Expression, this.Evaluation);
+
+            ExpressionTreeEvaluatedEvent domainEvent = new ExpressionTreeEvaluatedEvent(eventData);
+
+            this.AddDomainEvent(domainEvent);
+        }
+
+        return Evaluation;
+
+    }
+
+    private double DFS()
+    {
+        Stack<double> operandStack = new Stack<double>();
+        Stack<string> operatorStack = new Stack<string>();
+        HashSet<Node> visitedNodes = new HashSet<Node>();
+
+        Node currentNode = _root;
+
+        do
+        {
+
+            if (currentNode.Type.Equals(NodeTypeEnum.Operator) && !visitedNodes.Contains(currentNode))
+            {
+                operatorStack.Push(currentNode.Value);
+                visitedNodes.Add(currentNode);
+            }
+            else if (!visitedNodes.Contains(currentNode))
+            {
+                operandStack.Push(Double.Parse(currentNode.Value));
+                visitedNodes.Add(currentNode);
+            }
+
+            if (currentNode.Type.Equals(NodeTypeEnum.Operator) && visitedNodes.Contains(currentNode.LeftChild) && visitedNodes.Contains(currentNode.RightChild) && operandStack.Count > 1)
+            {
+                double operand2 = operandStack.Pop();
+                double operand1 = operandStack.Pop();
+                string arithmeticOperator = operatorStack.Pop();
+                operandStack.Push(PerformOperation(arithmeticOperator, operand1, operand2));
+            }
+
+            if (currentNode.LeftChild != null && !visitedNodes.Contains(currentNode.LeftChild))
+            {
+                currentNode = currentNode.LeftChild;
+                continue;
+            }
+
+            if (currentNode.RightChild != null && !visitedNodes.Contains(currentNode.RightChild))
+            {
+                currentNode = currentNode.RightChild;
+                continue;
+            }
+
+            if (currentNode.ParentNode != null)
+            {
+                currentNode = currentNode.ParentNode;
+                continue;
+            }
+        } while (operandStack.Count > 1 || operatorStack.Count > 0);
+
+        var result = operandStack.Pop();
+        return result;
+    }
+
+    private double PerformOperation(string arithmeticOperator, double operand1, double operand2) => arithmeticOperator switch
+    {
+        "+" => operand1 + operand2,
+        "-" => operand1 - operand2,
+        "*" => operand1 * operand2,
+        "/" => operand1 / operand2,
+        _ => 0.0d,
+    };
 
     private void Validate(string expressionString)
     {
         if (expressionString is null || expressionString.Trim().Equals(string.Empty))
         {
-            throw new DomainException(ValidationResources.Null_Or_Empty_String);
+            throw new DomainValidationException(ValidationResources.Null_Or_Empty_String);
         }
 
         if (Regex.Match(expressionString, ValidationPatterns.INVALID_CHARACTERS).Success)
         {
-            throw new DomainException(expressionString, ValidationResources.Invalid_Characters);
+            throw new DomainValidationException(expressionString, ValidationResources.Invalid_Characters);
         }
 
         if (Regex.Match(expressionString, ValidationPatterns.CONSECUTIVE_OPERATORS).Success)
         {
-            throw new DomainException(expressionString, ValidationResources.Consecutive_Operators);
+            throw new DomainValidationException(expressionString, ValidationResources.Consecutive_Operators);
         }
 
         if (Regex.Match(expressionString, ValidationPatterns.STARTS_OR_ENDS_WITH_NON_DIGITS).Success)
         {
-            throw new DomainException(expressionString, ValidationResources.Starts_Or_Ends_With_Operator);
+            throw new DomainValidationException(expressionString, ValidationResources.Starts_Or_Ends_With_Operator);
         }
 
         if (Regex.Match(expressionString, ValidationPatterns.CONTAINS_ONLY_DIGITS).Success)
         {
-            throw new DomainException(expressionString, ValidationResources.Contains_Only_Digits);
+            throw new DomainValidationException(expressionString, ValidationResources.Contains_Only_Digits);
         }
     }
 
-    public double Evaluate()
+
+    public int GetNodeCount()
     {
-        throw new NotImplementedException();
+        return _nodes.Count;
     }
-
-
     public void Dispose()
     {
         Dispose(true);
