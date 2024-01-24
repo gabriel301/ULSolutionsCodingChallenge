@@ -4,8 +4,6 @@
 name: UL Solutions Coding Challenge Pipeline
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
