@@ -6,6 +6,8 @@ name: UL Solutions Coding Challenge Pipeline
 on:
   pull_request:
     branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 
 env:
   SOLUTION_PATH: ./ExpressionEvaluatorAPI/ExpressionEvaluatorAPI.sln
@@ -25,7 +27,15 @@ jobs:
     - name: Build
       run: dotnet build  ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
     - name: Test
-      run: dotnet test  ${{ env.SOLUTION_PATH }} --configuration Release  --no-restore --no-build --verbosity normal
+      run: dotnet test  ${{ env.SOLUTION_PATH }} --logger "trx;LogFileName=test-results.trx" --configuration Release  --no-restore --no-build --verbosity normal
     - name: Publish
       run: dotnet publish ${{ env.SOLUTION_PATH }} --configuration Release  --no-restore --no-build 
+    - name: Test Report
+      uses: dorny/test-results.trx@v1
+      if: always()
+      with:
+        path: "**/test-results.trx"
+        reporter: dotnet-trx
+        fail-on-error: true
+
       
