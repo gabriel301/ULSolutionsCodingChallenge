@@ -31,7 +31,7 @@ jobs:
     - name: Publish
       run: dotnet publish ${{ env.SOLUTION_PATH }} --configuration Release  --no-restore --no-build 
     - name: Test Report
-      uses: dorny/test-results.trx@v1
+      uses: dorny/test-reporter@v1
       if: always()
       with:
         path: "**/test-results.trx"
