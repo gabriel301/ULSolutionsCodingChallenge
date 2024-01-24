@@ -11,7 +11,14 @@ on:
 
 env:
   SOLUTION_PATH: ./ExpressionEvaluatorAPI/ExpressionEvaluatorAPI.sln
+
+permissions:
+    contents: read
+    actions: read
+    checks: write 
+
 jobs:
+   
   build:
 
     runs-on: ubuntu-latest
