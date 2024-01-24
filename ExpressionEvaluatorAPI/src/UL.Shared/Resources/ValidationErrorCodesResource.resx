@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Consecutive_Operators" xml:space="preserve">
-    <value>A string de entrada não pode conter uma sequência de operadores sem operandos.</value>
+    <value>Consecutive.Operators.Validation</value>
   </data>
   <data name="Contains_Only_Digits" xml:space="preserve">
-    <value>A string de entrada deve conter uma expressão aritimética.</value>
-  </data>
-  <data name="Expression_Tree_Null" xml:space="preserve">
-    <value>A instância da Expression Tree não pode ser nula.</value>
+    <value>Contains.Only.Digits.Validation</value>
   </data>
   <data name="Invalid_Characters" xml:space="preserve">
-    <value>A string de entrada deve conter somente dígitos e operadores aritiméticos (+ - / *) e não pode conter espaços.</value>
+    <value>Invalid.Characters.Validation</value>
   </data>
-  <data name="Null_Or_Empty_String" xml:space="preserve">
-    <value>A string de entrada não pode ser nula ou vazia.</value>
+  <data name="Not_Empty" xml:space="preserve">
+    <value>Not.Empty.Validation</value>
   </data>
-  <data name="Starts_Or_Ends_With_Operator" xml:space="preserve">
-    <value>A string de entrada deve começar com um dígito.</value>
+  <data name="Not_Null" xml:space="preserve">
+    <value>Not.Null.Validation</value>
+  </data>
+  <data name="Starts_Or_Ends_With_Non_Digits" xml:space="preserve">
+    <value>Starts.Or.Ends.With.Non.Digits.Validation</value>
   </data>
 </root>

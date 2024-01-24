@@ -4,13 +4,15 @@ using UL.Domain.Exceptions;
 using UL.Domain.Exceptions.ExpressionTree;
 using UL.Domain.Resources;
 using FluentAssertions;
-using UL.Resources.Validation;
+using UL.Shared.Resources;
 using UL.Entities.Expression;
+using UL.Domain.Events.ExpressionTree.Evaluated;
 
 namespace UnitTests.Domain.Entity;
 public class ExpressionTreeTest
 {
 
+    #region Theory Data
     public static TheoryData<string> InfinityValues =>
         new TheoryData<string>
         {
@@ -19,8 +21,10 @@ public class ExpressionTreeTest
             
         };
 
-    
-    
+    #endregion
+
+    #region Tests
+
     [Fact(DisplayName = nameof(Instantiate))]
     [Trait("Domain", "ExpressionTree")]
     public void Instantiate()
@@ -158,6 +162,9 @@ public class ExpressionTreeTest
         ExpressionTree tree = ExpressionTree.Create(data);
 
         double result = tree.Evaluate();
+        tree.GetDomainEvents().Should().HaveCount(2);
+        tree.GetDomainEvents().Select(domainEvent => domainEvent).First().Should().BeOfType<ExpressionTreeCreatedEvent>();
+        tree.GetDomainEvents().Select(domainEvent => domainEvent).Last().Should().BeOfType<ExpressionTreeEvaluatedEvent>();
         tree.Dispose();
 
         result.Should().BeApproximately(expectedResult, 0.0001);
@@ -179,4 +186,6 @@ public class ExpressionTreeTest
         action.Should().Throw<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExpectionResource.Infinity_Value);
         action.Should().Throw<ExpressionTreeEvaluationException>().Which.Expression.Should().Be(data);
     }
+
+    #endregion
 }

@@ -9,7 +9,7 @@ using UL.Application.Expression.Command;
 using UL.Entities.Expression;
 
 namespace UL.Application.Expression.Handlers;
-internal sealed class EvaluateExpressionCommandHandler : ICommandHandler<EvaluateExpressionCommand, double>
+public sealed class EvaluateExpressionCommandHandler : ICommandHandler<EvaluateExpressionCommand, double>
 {
     private readonly IPublisher _publisher;
 

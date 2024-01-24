@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UL.Resources\UL.Resources.csproj" />
     <ProjectReference Include="..\UL.Shared\UL.Shared.csproj" />
   </ItemGroup>
 

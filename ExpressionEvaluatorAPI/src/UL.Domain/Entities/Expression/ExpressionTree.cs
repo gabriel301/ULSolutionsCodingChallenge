@@ -6,7 +6,7 @@ using UL.Domain.Exceptions;
 using UL.Domain.Exceptions.ExpressionTree;
 using UL.Domain.Resources;
 using UL.Shared.RegexPatterns;
-using UL.Resources.Validation;
+using UL.Shared.Resources;
 using System.Text.RegularExpressions;
 using UL.Domain.Entities.Expression;
 

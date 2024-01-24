@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using UL.Domain.Events.ExpressionTree.Created;
 
 namespace UL.Application.Expression.Handlers;
-internal sealed class ExpressionCreatedDomainEventHandler : INotificationHandler<ExpressionTreeCreatedEvent>
+public sealed class ExpressionCreatedDomainEventHandler : INotificationHandler<ExpressionTreeCreatedEvent>
 {
 
-    private readonly ILogger _logger;
+    private readonly ILogger<ExpressionCreatedDomainEventHandler> _logger;
 
-    public ExpressionCreatedDomainEventHandler(ILogger log)
+    public ExpressionCreatedDomainEventHandler(ILogger<ExpressionCreatedDomainEventHandler> log)
     {
         _logger = log;
     }

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using UL.Domain.Events.ExpressionTree.Evaluated;
 
 namespace UL.Application.Expression.Handlers;
-internal sealed class ExpressionEvaluatedDomainEventHandler : INotificationHandler<ExpressionTreeEvaluatedEvent>
+public sealed class ExpressionEvaluatedDomainEventHandler : INotificationHandler<ExpressionTreeEvaluatedEvent>
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<ExpressionCreatedDomainEventHandler> _logger;
 
-    public ExpressionEvaluatedDomainEventHandler(ILogger logger)
+    public ExpressionEvaluatedDomainEventHandler(ILogger<ExpressionCreatedDomainEventHandler> logger)
     {
         _logger = logger;
     }
