@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace UL.Application.Exceptions;
 public class ApplicationValidationException: Exception
 {
-    private IEnumerable<ValidationError> _errors;
+    public IEnumerable<ValidationError> Errors { get; }
 
     public ApplicationValidationException(IEnumerable<ValidationError> errors)
     {
-        _errors = errors;
+        Errors = errors;
     }
 }

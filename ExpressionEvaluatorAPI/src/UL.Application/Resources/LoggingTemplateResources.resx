@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Consecutive_Operators" xml:space="preserve">
-    <value>Input string cannot contain a sequence of operators without operands.</value>
+  <data name="Event_Publised" xml:space="preserve">
+    <value>New Event Published: {@event}</value>
   </data>
-  <data name="Contains_Only_Digits" xml:space="preserve">
-    <value>Input string must contain an arithmetic expression.</value>
+  <data name="Executing_Request" xml:space="preserve">
+    <value>Executing request {RequestName}</value>
   </data>
-  <data name="Expression_Tree_Null" xml:space="preserve">
-    <value>Expression Tree instance cannot be null.</value>
+  <data name="Request_Falied" xml:space="preserve">
+    <value>Request {RequestName} processing failed</value>
   </data>
-  <data name="Invalid_Characters" xml:space="preserve">
-    <value>Input string must contain only digits, arithmetic operators (+ - / *) and cannot contain spaces.</value>
-  </data>
-  <data name="Null_Or_Empty_String" xml:space="preserve">
-    <value>Input string cannot be null or empty.</value>
-  </data>
-  <data name="Starts_Or_Ends_With_Operator" xml:space="preserve">
-    <value>Input string must start and end with a digit.</value>
+  <data name="Request_Processed" xml:space="preserve">
+    <value>Request {RequestName} processed successfully</value>
   </data>
 </root>

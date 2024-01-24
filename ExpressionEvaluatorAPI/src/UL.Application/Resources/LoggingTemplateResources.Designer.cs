@@ -8,8 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace UL.Shared.Resources
-{
+namespace UL.Application.Resources {
     using System;
     
     
@@ -23,24 +22,24 @@ namespace UL.Shared.Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ValidationResources {
+    internal class LoggingTemplateResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ValidationResources() {
+        internal LoggingTemplateResources() {
         }
         
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("UL.Shared.Resources.ValidationResources", typeof(ValidationResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("UL.Application.Resources.LoggingTemplateResources", typeof(LoggingTemplateResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -52,7 +51,7 @@ namespace UL.Shared.Resources
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -62,56 +61,38 @@ namespace UL.Shared.Resources
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Input string cannot contain a sequence of operators without operands..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a New Event Published: {@event}.
         /// </summary>
-        public static string Consecutive_Operators {
+        internal static string Event_Publised {
             get {
-                return ResourceManager.GetString("Consecutive_Operators", resourceCulture);
+                return ResourceManager.GetString("Event_Publised", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Input string must contain an arithmetic expression..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Executing request {RequestName}.
         /// </summary>
-        public static string Contains_Only_Digits {
+        internal static string Executing_Request {
             get {
-                return ResourceManager.GetString("Contains_Only_Digits", resourceCulture);
+                return ResourceManager.GetString("Executing_Request", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Expression Tree instance cannot be null..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Request {RequestName} processing failed.
         /// </summary>
-        public static string Expression_Tree_Null {
+        internal static string Request_Falied {
             get {
-                return ResourceManager.GetString("Expression_Tree_Null", resourceCulture);
+                return ResourceManager.GetString("Request_Falied", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Input string must contain only digits, arithmetic operators (+ - / *) and cannot contain spaces..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Request {RequestName} processed successfully.
         /// </summary>
-        public static string Invalid_Characters {
+        internal static string Request_Processed {
             get {
-                return ResourceManager.GetString("Invalid_Characters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Input string cannot be null or empty..
-        /// </summary>
-        public static string Null_Or_Empty_String {
-            get {
-                return ResourceManager.GetString("Null_Or_Empty_String", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Input string must start and end with a digit..
-        /// </summary>
-        public static string Starts_Or_Ends_With_Operator {
-            get {
-                return ResourceManager.GetString("Starts_Or_Ends_With_Operator", resourceCulture);
+                return ResourceManager.GetString("Request_Processed", resourceCulture);
             }
         }
     }

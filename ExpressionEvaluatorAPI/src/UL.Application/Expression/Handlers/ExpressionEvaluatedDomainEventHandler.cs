@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UL.Application.Resources;
 using UL.Domain.Events.ExpressionTree.Evaluated;
 
 namespace UL.Application.Expression.Handlers;
@@ -19,7 +20,7 @@ public sealed class ExpressionEvaluatedDomainEventHandler : INotificationHandler
 
     public Task Handle(ExpressionTreeEvaluatedEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Teste", notification.UTCEventDateTime, notification.EventData.expression,notification.EventData.evaluation);
+        _logger.LogInformation(LoggingTemplateResources.Event_Publised, notification);
 
         return Task.CompletedTask;
     }

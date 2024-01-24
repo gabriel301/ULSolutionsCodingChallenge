@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UL.Application.Resources;
 using UL.Domain.Exceptions;
 
 namespace UL.Application.Behaviour.Logging;
@@ -26,17 +27,17 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
 
         try
         {
-            _logger.LogInformation("Executing request {RequestName}", requestName);
+            _logger.LogInformation(LoggingTemplateResources.Executing_Request, requestName);
 
             var result = await next();
 
-            _logger.LogInformation("Request {RequestName} processed successfully", requestName);
+            _logger.LogInformation(LoggingTemplateResources.Request_Processed, requestName);
 
             return result;
         }
         catch (Exception exception) 
         {
-            _logger.LogError(exception, "Request {RequestName} processing failed", requestName);
+            _logger.LogError(exception, LoggingTemplateResources.Request_Falied, requestName);
             throw;
         }
 
