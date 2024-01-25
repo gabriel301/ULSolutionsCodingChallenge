@@ -178,8 +178,6 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
 
-        //Necessary to get the rate window limit back for other tests
-        Task.Delay(2000).Wait();
     }
     #endregion
 }

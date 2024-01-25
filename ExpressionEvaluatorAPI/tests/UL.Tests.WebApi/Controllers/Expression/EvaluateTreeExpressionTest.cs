@@ -174,8 +174,6 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
         successRequestsCount.Should().BeInRange(395, 400);
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
-
-        Task.Delay(2000).Wait();
     }
 
 
