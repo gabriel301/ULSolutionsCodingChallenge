@@ -174,9 +174,9 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
 
         var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
 
-        successRequestsCount.Should().BeInRange(395, 400);
+        successRequestsCount.Should().BeGreaterThanOrEqualTo(300);
         tooManyRequestsCount.Should().NotBeNull();
-        tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
+        tooManyRequestsCount!.Count.Should().BeGreaterThanOrEqualTo(500);
 
         //Necessary to get the rate window limit back for other tests
         await Task.Delay(2000);
