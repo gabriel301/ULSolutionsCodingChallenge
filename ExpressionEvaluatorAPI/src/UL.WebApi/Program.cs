@@ -58,8 +58,8 @@ public class Program
             });
             options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             options.CustomSchemaIds(x => x.FullName);
-        }
-);
+        });
+
         builder.Services.RegisterApplicationDependencies();
 
 
@@ -84,8 +84,7 @@ public class Program
             {
                 options.SwaggerEndpoint($"/swagger/v{ApiVersions.v1}/swagger.json", $"v{ApiVersions.v1}");
                 options.SwaggerEndpoint($"/swagger/v{ApiVersions.v2}/swagger.json", $"v{ApiVersions.v2}");
-            }
-  );
+            });
         }
 
         app.UseHttpsRedirection();
@@ -97,5 +96,8 @@ public class Program
         app.MapControllers();
 
         app.Run();
+
+        
     }
 }
+

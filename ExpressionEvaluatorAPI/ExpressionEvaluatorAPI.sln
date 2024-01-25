@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UL.Tests.Domain", "tests\UL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UL.Tests.Application", "tests\UL.Tests.Application\UL.Tests.Application.csproj", "{A4D891C9-E85E-4B1D-A10D-F93A26BFE775}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UL.Tests.WebApi", "tests\UL.Tests.WebApi\UL.Tests.WebApi.csproj", "{247BD61F-EBDC-41BA-ABEE-6C5CE5B8E261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UL.Tests.WebApi", "tests\UL.Tests.WebApi\UL.Tests.WebApi.csproj", "{247BD61F-EBDC-41BA-ABEE-6C5CE5B8E261}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

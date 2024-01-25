@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using UL.Application.Exceptions;
 using UL.Domain.Exceptions;
+using UL.Domain.Exceptions.ArithmeticExpression;
 using UL.Domain.Exceptions.ExpressionTree;
 
 namespace UL.WebApi.Midleware;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandlingMidleware : IExceptionFilter
             details.Status = StatusCodes.Status400BadRequest;
             details.Detail = exception.Message;
         }
-        else if (exception is ExpressionTreeEvaluationException)
+        else if (exception is ExpressionTreeEvaluationException or ArithmeticExpressionEvaluationException)
         {
             details.Status = StatusCodes.Status422UnprocessableEntity;
             details.Detail = exception.Message;
