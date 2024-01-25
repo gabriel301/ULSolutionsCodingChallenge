@@ -1,16 +1,18 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
+using Microsoft.Net.Http.Headers;
+using NBomber.CSharp;
+using NBomber.FSharp;
+using NBomber.Http.CSharp;
+using Newtonsoft.Json;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http.Json;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using UL.Tests.WebApi.Infrastructure;
 using UL.WebApi;
+using Xunit;
 
 namespace UL.Tests.WebApi.Controllers.Expression;
 public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
@@ -142,5 +144,42 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
         result.Should().BeApproximately(expectedResult, 0.0001);
     }
 
+
+    [Fact(DisplayName = nameof(RateLimitTest))]
+    [Trait("WebApi", "EvaluateArithmeticExpression")]
+    public void RateLimitTest()
+    {
+
+        var expression = JsonConvert.SerializeObject("1+1+1");
+
+        var testScenario = NBomber.CSharp.Scenario.Create("Rate Limit Scenario", async contex =>
+        {
+            var request = Http.CreateRequest("POST", _apiUrl)
+                        .WithBody(new StringContent(expression, Encoding.UTF8, System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json")));
+
+            var response = await Http.Send(HttpClient, request);
+
+
+            return response;
+        })
+        .WithoutWarmUp()
+        .WithLoadSimulations(Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(2)));
+
+        var result = NBomber.CSharp.NBomberRunner
+            .RegisterScenarios(testScenario)
+            .Run();
+
+        var scenarioStats = result.GetScenarioStats("Rate Limit Scenario");
+        var successRequestsCount = scenarioStats.AllOkCount;
+
+        var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
+
+        successRequestsCount.Should().BeInRange(395, 400);
+        tooManyRequestsCount.Should().NotBeNull();
+        tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
+
+        //Necessary to get the rate window limit back for other tests
+        Task.Delay(2000).Wait();
+    }
     #endregion
 }

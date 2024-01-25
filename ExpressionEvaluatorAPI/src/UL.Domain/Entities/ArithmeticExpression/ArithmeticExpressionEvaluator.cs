@@ -10,7 +10,7 @@ using UL.Shared.RegexPatterns;
 using UL.Shared.Resources;
 
 namespace UL.Domain.Entities.ArithmeticExpression;
-public sealed class ArithmeticExpressionEvaluator : Entity
+public sealed class ArithmeticExpressionEvaluator : Entity, IExpressionEvaluator
 {
 
     private bool isEvaluated = false;

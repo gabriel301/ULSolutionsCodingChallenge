@@ -11,7 +11,7 @@ using UL.Shared.RegexPatterns;
 using UL.Shared.Resources;
 
 namespace UL.Domain.Entities.ExpressionTree;
-public class BinaryExpressionTree : Entity, IExpressionTree, IDisposable
+public class BinaryExpressionTree : Entity, IExpressionEvaluator, IDisposable
 {
 
     private List<Node> _nodes = new List<Node>();

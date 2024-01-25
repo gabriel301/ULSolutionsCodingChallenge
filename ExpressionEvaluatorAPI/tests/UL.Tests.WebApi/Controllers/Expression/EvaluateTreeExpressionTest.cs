@@ -1,14 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Expressions;
-using System;
-using System.Collections.Generic;
+using NBomber.CSharp;
+using NBomber.Http.CSharp;
+using Newtonsoft.Json;
 using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
-using System.Threading.Tasks;
 using UL.Tests.WebApi.Infrastructure;
 using UL.WebApi;
 using Xunit;
@@ -20,7 +18,7 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
     #region Setup
     private readonly string _apiUrl;
 
-    public EvaluateTreeExpressionTest(WebApplicationFactory<Program> factory):base(factory)
+    public EvaluateTreeExpressionTest(WebApplicationFactory<Program> factory) : base(factory)
     {
         _apiUrl = "api/v1/expression";
     }
@@ -44,7 +42,7 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
     [InlineData("")]
     [InlineData("   ")] //Spaces
     [InlineData("       ")] //Tabs
-    public async Task IsNullOrEmptyString(string expression) 
+    public async Task IsNullOrEmptyString(string expression)
     {
         var response = await HttpClient.PostAsJsonAsync(_apiUrl, expression);
         var result = await response.Content.ReadAsStringAsync();
@@ -139,10 +137,48 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
     public async Task EvaluateExpression(string expression, double expectedResult)
     {
         var response = await HttpClient.PostAsJsonAsync(_apiUrl, expression);
-        var result = Double.Parse(await response.Content.ReadAsStringAsync(),CultureInfo.InvariantCulture);
+        var result = Double.Parse(await response.Content.ReadAsStringAsync(), CultureInfo.InvariantCulture);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Should().BeApproximately(expectedResult, 0.0001);
     }
+
+    [Fact(DisplayName = nameof(RateLimitTest))]
+    [Trait("WebApi", "EvaluateTreeExpression")]
+    public void RateLimitTest()
+    {
+
+        var expression = JsonConvert.SerializeObject("1+1+1");
+
+        var testScenario = NBomber.CSharp.Scenario.Create("Rate Limit Scenario", async contex =>
+        {
+            var request = Http.CreateRequest("POST", _apiUrl)
+                        .WithBody(new StringContent(expression, Encoding.UTF8, System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json")));
+
+            var response = await Http.Send(HttpClient, request);
+
+
+            return response;
+        })
+        .WithoutWarmUp()
+        .WithLoadSimulations(Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(2)));
+
+        var result = NBomber.CSharp.NBomberRunner
+            .RegisterScenarios(testScenario)
+            .Run();
+
+        var scenarioStats = result.GetScenarioStats("Rate Limit Scenario");
+        var successRequestsCount = scenarioStats.AllOkCount;
+
+        var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
+
+        successRequestsCount.Should().BeInRange(395, 400);
+        tooManyRequestsCount.Should().NotBeNull();
+        tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
+
+        Task.Delay(2000).Wait();
+    }
+
+
 
     #endregion
 

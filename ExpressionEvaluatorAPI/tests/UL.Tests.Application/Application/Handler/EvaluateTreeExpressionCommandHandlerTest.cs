@@ -31,7 +31,7 @@ public class EvaluateTreeExpressionCommandHandlerTest
 
     #endregion
 
-   #region Theory Data
+    #region Theory Data
     public static TheoryData<EvaluateTreeExpressionCommand> NullOrEmptyValues =>
      new TheoryData<EvaluateTreeExpressionCommand>
      {

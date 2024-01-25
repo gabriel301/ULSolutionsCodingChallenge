@@ -68,9 +68,9 @@ public class Program
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             options.AddFixedWindowLimiter("fixed", configuration =>
             {
-                configuration.QueueLimit = 10;
-                configuration.PermitLimit = 10;
-                configuration.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                configuration.QueueLimit = 0;
+                configuration.PermitLimit = 200;
+                //configuration.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
                 configuration.Window = TimeSpan.FromSeconds(1);
             });
         });
@@ -97,7 +97,7 @@ public class Program
 
         app.Run();
 
-        
+
     }
 }
 
