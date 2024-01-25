@@ -35,9 +35,10 @@ public sealed class EvaluateExpressionCommandHandler : ICommandHandler<EvaluateE
                 {
                     await _publisher.Publish(item);
                 }
+                tree.ClearDomainEvents();
             }            
 
-            tree.ClearDomainEvents();
+            
             return evaluationResult;
         }
     }

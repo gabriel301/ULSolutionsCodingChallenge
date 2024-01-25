@@ -3,7 +3,7 @@
 namespace UL.Domain.Entities.Abstraction;
 public abstract class Entity
 {
-    private readonly List<IEvent> _events = new();
+    protected readonly List<IEvent> _events = new();
 
     public virtual IReadOnlyList<IEvent> GetDomainEvents()
     {
