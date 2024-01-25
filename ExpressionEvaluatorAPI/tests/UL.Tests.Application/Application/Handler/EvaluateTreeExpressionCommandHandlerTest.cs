@@ -1,39 +1,32 @@
-﻿using MediatR;
+﻿using FluentAssertions;
+using MediatR;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using UL.Application.Expression.Command;
-using UL.Application.Expression.Handlers;
+using UL.Application.DomainServices;
+using UL.Application.ExpressionTree.Command;
+using UL.Application.ExpressionTree.Handlers;
 using UL.Domain.Events.ExpressionTree.Created;
 using UL.Domain.Events.ExpressionTree.Evaluated;
 using UL.Domain.Exceptions;
-using UL.Shared.Events;
-using static System.Collections.Specialized.BitVector32;
-using UL.Shared.Resources;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using UL.Entities.Expression;
-using FluentAssertions;
-using FluentAssertions.Common;
-using UL.Domain.Resources;
 using UL.Domain.Exceptions.ExpressionTree;
+using UL.Domain.Resources;
+using UL.Domain.Services.Abstraction;
+using UL.Shared.Resources;
 
 namespace UL.Tests.Application.Application.Handler;
-public class EvaluateExpressionCommandHandlerTest
+public class EvaluateTreeExpressionCommandHandlerTest
 {
     private readonly EvaluateTreeExpressionCommandHandler _handler;
     private readonly IPublisher _publisherMock;
+    private readonly IOperationService _operationService;
 
     #region Setup
-    public EvaluateExpressionCommandHandlerTest() 
+    public EvaluateTreeExpressionCommandHandlerTest()
     {
         _publisherMock = Substitute.For<IPublisher>();
         _publisherMock.Publish(Arg.Any<ExpressionTreeCreatedEvent>(), Arg.Any<CancellationToken>());
         _publisherMock.Publish(Arg.Any<ExpressionTreeEvaluatedEvent>(), Arg.Any<CancellationToken>());
-        _handler = new EvaluateTreeExpressionCommandHandler(_publisherMock);
+        _operationService = new BasicArithmeticOperationService();
+        _handler = new EvaluateTreeExpressionCommandHandler(_publisherMock, _operationService);
     }
 
     #endregion
@@ -62,9 +55,9 @@ public class EvaluateExpressionCommandHandlerTest
 
      };
 
-     public static TheoryData<EvaluateTreeExpressionCommand> SequentialOperatorsExpressions =>
-     new TheoryData<EvaluateTreeExpressionCommand>
-     {
+    public static TheoryData<EvaluateTreeExpressionCommand> SequentialOperatorsExpressions =>
+    new TheoryData<EvaluateTreeExpressionCommand>
+    {
             new EvaluateTreeExpressionCommand("++1+2"),
             new EvaluateTreeExpressionCommand("--1+2"),
             new EvaluateTreeExpressionCommand("//1+1"),
@@ -74,7 +67,7 @@ public class EvaluateExpressionCommandHandlerTest
             new EvaluateTreeExpressionCommand("1-*+/-2"),
             new EvaluateTreeExpressionCommand("1-2+-")
 
-     };
+    };
 
 
     public static TheoryData<EvaluateTreeExpressionCommand> StartsOrEndsWithOperatorsExpressions =>
@@ -136,7 +129,7 @@ public class EvaluateExpressionCommandHandlerTest
 
     #region Tests
     [Theory(DisplayName = nameof(IsNullOrEmptyString))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(NullOrEmptyValues))]
     public async Task IsNullOrEmptyString(EvaluateTreeExpressionCommand command)
     {
@@ -147,7 +140,7 @@ public class EvaluateExpressionCommandHandlerTest
 
 
     [Theory(DisplayName = nameof(ContainsInvalidCharacters))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(InvalidCharactersExpressions))]
     public async Task ContainsInvalidCharacters(EvaluateTreeExpressionCommand command)
     {
@@ -158,7 +151,7 @@ public class EvaluateExpressionCommandHandlerTest
 
 
     [Theory(DisplayName = nameof(ContainsSequentialOperators))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(SequentialOperatorsExpressions))]
     public async Task ContainsSequentialOperators(EvaluateTreeExpressionCommand command)
     {
@@ -169,7 +162,7 @@ public class EvaluateExpressionCommandHandlerTest
 
 
     [Theory(DisplayName = nameof(StartsOrEndsWithOperators))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(StartsOrEndsWithOperatorsExpressions))]
     public async Task StartsOrEndsWithOperators(EvaluateTreeExpressionCommand command)
     {
@@ -180,7 +173,7 @@ public class EvaluateExpressionCommandHandlerTest
 
 
     [Theory(DisplayName = nameof(ContainsOnlyDigits))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(ContainsOnlyDigitsExpressions))]
     public async Task ContainsOnlyDigits(EvaluateTreeExpressionCommand command)
     {
@@ -190,7 +183,7 @@ public class EvaluateExpressionCommandHandlerTest
     }
 
     [Theory(DisplayName = nameof(EvaluateExpressions))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(Expressions))]
     public async Task EvaluateExpressions(ExpressionResultTest testData)
     {
@@ -201,13 +194,13 @@ public class EvaluateExpressionCommandHandlerTest
 
 
     [Theory(DisplayName = nameof(EvaluateExpressionInfinity))]
-    [Trait("Application", "EvaluateExpressionCommandHandler")]
+    [Trait("Application", "EvaluateTreeExpressionCommandHandler")]
     [MemberData(nameof(InfinityExpressions))]
     public async Task EvaluateExpressionInfinity(EvaluateTreeExpressionCommand command)
     {
 
         Func<Task> action = async () => { await _handler.Handle(command, default); };
-        await action.Should().ThrowAsync<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExpectionResource.Infinity_Value);
+        await action.Should().ThrowAsync<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExceptionResource.Infinity_Value);
     }
 
 

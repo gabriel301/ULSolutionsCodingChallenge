@@ -1,13 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UL.Application.Resources;
-using UL.Domain.Exceptions;
 
 namespace UL.Application.Behaviour.Logging;
 public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -35,9 +28,9 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
 
             return result;
         }
-        catch (Exception exception) 
+        catch (Exception exception)
         {
-            _logger.LogError(exception, LoggingTemplateResources.Request_Falied, requestName,exception);
+            _logger.LogError(exception, LoggingTemplateResources.Request_Falied, requestName, exception);
             throw;
         }
 

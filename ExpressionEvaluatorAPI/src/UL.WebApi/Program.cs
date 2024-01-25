@@ -1,9 +1,11 @@
 
-using UL.Application;
-using Serilog;
-using UL.WebApi.Midleware;
 using Asp.Versioning;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using UL.Application;
+using UL.WebApi.Midleware;
+using UL.WebApi.Versioning;
 
 namespace UL.WebApi;
 
@@ -15,7 +17,7 @@ public class Program
 
         //Removing server name from response header
         //Enforce TLS 3
-        builder.WebHost.ConfigureKestrel(config => 
+        builder.WebHost.ConfigureKestrel(config =>
         {
             config.AddServerHeader = false;
             config.ConfigureHttpsDefaults(x => x.SslProtocols = System.Security.Authentication.SslProtocols.Tls13);
@@ -24,11 +26,10 @@ public class Program
         builder.Host.UseSerilog((context, loggerConfig) =>
         loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-        builder.Services.AddControllers( options => options.Filters.Add(typeof(GlobalExceptionHandlingMidleware)));
+        builder.Services.AddControllers(options => options.Filters.Add(typeof(GlobalExceptionHandlingMidleware)));
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.RegisterApplicationDependencies();
-        builder.Services.AddApiVersioning(options => 
+
+        builder.Services.AddApiVersioning(options =>
         {
             options.DefaultApiVersion = new ApiVersion(1);
             options.ReportApiVersions = true;
@@ -36,17 +37,36 @@ public class Program
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.UnsupportedApiVersionStatusCode = StatusCodes.Status404NotFound;
         })
-        .AddMvc()
-        .AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'V";
-            options.SubstituteApiVersionInUrl = true;
-        });
+       .AddMvc()
+       .AddApiExplorer(options =>
+       {
+           options.GroupNameFormat = "'v'V";
+           options.SubstituteApiVersionInUrl = true;
+       });
 
-        builder.Services.AddRateLimiter( options => 
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v" + ApiVersions.v1, new OpenApiInfo()
+            {
+                Title = "Expression API v1",
+                Version = $"v{ApiVersions.v1}"
+            });
+            options.SwaggerDoc("v" + ApiVersions.v2, new OpenApiInfo()
+            {
+                Title = "Expression API v2",
+                Version = $"v{ApiVersions.v2}"
+            });
+            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+            options.CustomSchemaIds(x => x.FullName);
+        }
+);
+        builder.Services.RegisterApplicationDependencies();
+
+
+        builder.Services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-            options.AddFixedWindowLimiter("fixed", configuration => 
+            options.AddFixedWindowLimiter("fixed", configuration =>
             {
                 configuration.QueueLimit = 10;
                 configuration.PermitLimit = 10;
@@ -60,7 +80,12 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint($"/swagger/v{ApiVersions.v1}/swagger.json", $"v{ApiVersions.v1}");
+                options.SwaggerEndpoint($"/swagger/v{ApiVersions.v2}/swagger.json", $"v{ApiVersions.v2}");
+            }
+  );
         }
 
         app.UseHttpsRedirection();

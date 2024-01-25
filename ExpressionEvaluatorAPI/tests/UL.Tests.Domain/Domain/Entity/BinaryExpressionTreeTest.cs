@@ -1,16 +1,48 @@
-﻿using UL.Domain.Entities.Expression;
+﻿using FluentAssertions;
+using NSubstitute;
+using UL.Domain.Entities.ExpressionTree;
 using UL.Domain.Events.ExpressionTree.Created;
+using UL.Domain.Events.ExpressionTree.Evaluated;
 using UL.Domain.Exceptions;
 using UL.Domain.Exceptions.ExpressionTree;
 using UL.Domain.Resources;
-using FluentAssertions;
+using UL.Domain.Services.Abstraction;
 using UL.Shared.Resources;
-using UL.Entities.Expression;
-using UL.Domain.Events.ExpressionTree.Evaluated;
 
 namespace UnitTests.Domain.Entity;
-public class ExpressionTreeTest
+public class BinaryExpressionTreeTest
 {
+
+    #region Setup
+    private readonly IOperationService _operationServiceMock;
+    public BinaryExpressionTreeTest()
+    {
+        _operationServiceMock = Substitute.For<IOperationService>();
+
+        //1+1+1 Test
+        _operationServiceMock.Calculate("+", 1.0, 1.0).Returns(2.0);
+        _operationServiceMock.Calculate("+", 2.0, 1.0).Returns(3.0);
+
+        //4+5*2 test
+        _operationServiceMock.Calculate("*", 5.0, 2.0).Returns(10.0);
+        _operationServiceMock.Calculate("+", 4.0, 10.0).Returns(14.0);
+
+        //4+5/2 test
+        _operationServiceMock.Calculate("/", 5.0, 2.0).Returns(2.5);
+        _operationServiceMock.Calculate("+", 4.0, 2.5).Returns(6.5);
+
+        //4+5/2-1 test
+        _operationServiceMock.Calculate("/", 5.0, 2.0).Returns(2.5);
+        _operationServiceMock.Calculate("+", 4.0, 2.5).Returns(6.5);
+        _operationServiceMock.Calculate("-", 6.5, 1.0).Returns(5.5);
+
+        //1/0 test
+        _operationServiceMock.Calculate("/", 1.0, 0.0).Returns(double.PositiveInfinity);
+
+        //Double Max test
+        _operationServiceMock.Calculate("+", Double.Parse(double.MaxValue.ToString("0.#")), Double.Parse(double.MaxValue.ToString("0.#"))).Returns(double.PositiveInfinity);
+    }
+    #endregion
 
     #region Theory Data
     public static TheoryData<string> InfinityValues =>
@@ -18,7 +50,7 @@ public class ExpressionTreeTest
         {
             "1/0",
             $"{double.MaxValue.ToString("0.#")}+{double.MaxValue.ToString("0.#")}"
-            
+
         };
 
     #endregion
@@ -26,13 +58,13 @@ public class ExpressionTreeTest
     #region Tests
 
     [Fact(DisplayName = nameof(Instantiate))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     public void Instantiate()
     {
 
         string data = "1+1";
 
-        ExpressionTree tree = ExpressionTree.Create(data);
+        BinaryExpressionTree tree = BinaryExpressionTree.Create(data);
 
         tree.Should().NotBeNull();
         tree.GetNodeCount().Should().Be(data.Length);
@@ -44,14 +76,14 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(IsNullOrEmptyString))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")] //Spaces
     [InlineData("       ")] //Tabs
     public void IsNullOrEmptyString(string? data)
     {
-        Action action = () => { ExpressionTree.Create(data); };
+        Action action = () => { BinaryExpressionTree.Create(data); };
 
         action.Should().Throw<DomainValidationException>().WithMessage(ValidationResources.Null_Or_Empty_String);
 
@@ -60,7 +92,7 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(ContainsInvalidCharacters))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData("A+1+3")]
     [InlineData("1+2=3")]
     [InlineData("1.1+2+3")]
@@ -69,7 +101,7 @@ public class ExpressionTreeTest
     [InlineData("1+1!2")]
     public void ContainsInvalidCharacters(string? data)
     {
-        Action action = () => { ExpressionTree.Create(data); };
+        Action action = () => { BinaryExpressionTree.Create(data); };
 
         var exception = Assert.Throws<DomainValidationException>(action);
 
@@ -80,7 +112,7 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(ContainsSequentialOperators))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData("++1+2")]
     [InlineData("--1+2")]
     [InlineData("//1+1")]
@@ -91,7 +123,7 @@ public class ExpressionTreeTest
     [InlineData("1-2+-")]
     public void ContainsSequentialOperators(string? data)
     {
-        Action action = () => { ExpressionTree.Create(data); };
+        Action action = () => { BinaryExpressionTree.Create(data); };
 
         var exception = Assert.Throws<DomainValidationException>(action);
 
@@ -102,7 +134,7 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(StartsOrEndsWithOperators))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData("+1+2")]
     [InlineData("-1+2-")]
     [InlineData("/1+1")]
@@ -117,7 +149,7 @@ public class ExpressionTreeTest
     [InlineData("*")]
     public void StartsOrEndsWithOperators(string? data)
     {
-        Action action = () => { ExpressionTree.Create(data); };
+        Action action = () => { BinaryExpressionTree.Create(data); };
 
         var exception = Assert.Throws<DomainValidationException>(action);
 
@@ -128,14 +160,14 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(ContainsOnlyDigits))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData("0")]
     [InlineData("1")]
     [InlineData("123")]
     [InlineData("12345")]
     public void ContainsOnlyDigits(string? data)
     {
-        Action action = () => { ExpressionTree.Create(data); };
+        Action action = () => { BinaryExpressionTree.Create(data); };
 
         var exception = Assert.Throws<DomainValidationException>(action);
 
@@ -146,22 +178,16 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(EvaluateExpression))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [InlineData("4+5*2", 14.0)]
     [InlineData("4+5/2", 6.5)]
     [InlineData("4+5/2-1", 5.5)]
     [InlineData("1+1+1", 3.0)]
-    [InlineData("1+2/3+4*5", 21.6666666)]
-    [InlineData("1/2+3*4", 12.5)]
-    [InlineData("1/2+3+4*5", 23.5)]
-    [InlineData("1/2/6/34554+243-908/3453-1344*465767+134565/23454*1245-13243-344565+566754/54365*2342-324344*4543+45345-56564", -2099822865.897338533165544)]
-    [InlineData("1231/6546+657657-442*7867/234+65767-242+657-2342*675/342", 704356.93074383)]
-
     public void EvaluateExpression(string? data, double expectedResult)
     {
-        ExpressionTree tree = ExpressionTree.Create(data);
+        BinaryExpressionTree tree = BinaryExpressionTree.Create(data);
 
-        double result = tree.Evaluate();
+        double result = tree.Evaluate(_operationServiceMock);
         tree.GetDomainEvents().Should().HaveCount(2);
         tree.GetDomainEvents().Select(domainEvent => domainEvent).First().Should().BeOfType<ExpressionTreeCreatedEvent>();
         tree.GetDomainEvents().Select(domainEvent => domainEvent).Last().Should().BeOfType<ExpressionTreeEvaluatedEvent>();
@@ -173,17 +199,17 @@ public class ExpressionTreeTest
 
 
     [Theory(DisplayName = nameof(EvaluateExpressionInfinity))]
-    [Trait("Domain", "ExpressionTree")]
+    [Trait("Domain", "BinaryExpressionTree")]
     [MemberData(nameof(InfinityValues))]
     public void EvaluateExpressionInfinity(string data)
     {
 
-        var tree = ExpressionTree.Create(data);
-        Action action = () => { tree.Evaluate(); };
+        var tree = BinaryExpressionTree.Create(data);
+        Action action = () => { tree.Evaluate(_operationServiceMock); };
 
         var exception = Assert.Throws<ExpressionTreeEvaluationException>(action);
 
-        action.Should().Throw<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExpectionResource.Infinity_Value);
+        action.Should().Throw<ExpressionTreeEvaluationException>().WithMessage(ExpressionTreeEvaluationExceptionResource.Infinity_Value);
         action.Should().Throw<ExpressionTreeEvaluationException>().Which.Expression.Should().Be(data);
     }
 

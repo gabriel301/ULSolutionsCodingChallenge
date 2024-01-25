@@ -1,5 +1,7 @@
-﻿namespace UL.Domain.Entities.Abstraction;
+﻿using UL.Domain.Services.Abstraction;
+
+namespace UL.Domain.Entities.Abstraction;
 public interface IExpressionTree : IDisposable
 {
-    public double Evaluate();
+    public double Evaluate(IOperationService operationService);
 }

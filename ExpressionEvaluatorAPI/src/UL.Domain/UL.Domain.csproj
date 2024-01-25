@@ -11,17 +11,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\ExpressionTreeEvaluationExpectionResource.Designer.cs">
+    <Compile Update="Resources\ExpressionTreeEvaluationExceptionResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>ExpressionTreeEvaluationExpectionResource.resx</DependentUpon>
+      <DependentUpon>ExpressionTreeEvaluationExceptionResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\ArithmeticExpressionEvaluationExceptionResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArithmeticExpressionEvaluationExceptionResource.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\ExpressionTreeEvaluationExpectionResource.resx">
+    <EmbeddedResource Update="Resources\ExpressionTreeEvaluationExceptionResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExpressionTreeEvaluationExpectionResource.Designer.cs</LastGenOutput>
+      <LastGenOutput>ExpressionTreeEvaluationExceptionResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ArithmeticExpressionEvaluationExceptionResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ArithmeticExpressionEvaluationExceptionResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

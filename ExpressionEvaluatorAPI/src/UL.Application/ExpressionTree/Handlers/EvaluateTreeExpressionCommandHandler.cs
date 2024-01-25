@@ -1,44 +1,42 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UL.Application.Abstractions.Command;
-using UL.Application.Expression.Command;
-using UL.Entities.Expression;
+using UL.Application.ExpressionTree.Command;
+using UL.Domain.Entities.ExpressionTree;
+using UL.Domain.Services.Abstraction;
 
-namespace UL.Application.Expression.Handlers;
+namespace UL.Application.ExpressionTree.Handlers;
 public sealed class EvaluateTreeExpressionCommandHandler : ICommandHandler<EvaluateTreeExpressionCommand, double>
 {
     private readonly IPublisher _publisher;
+    private readonly IOperationService _operationService;
 
-    public EvaluateTreeExpressionCommandHandler(IPublisher publisher)
+    public EvaluateTreeExpressionCommandHandler(IPublisher publisher, IOperationService operationService)
     {
-        this._publisher = publisher;
+        _publisher = publisher;
+        _operationService = operationService;
     }
 
     public async Task<double> Handle(EvaluateTreeExpressionCommand request, CancellationToken cancellationToken)
     {
         //Using block ensures dispose method will be called
-        using (ExpressionTree tree = ExpressionTree.Create(request.expression)) 
+        using (BinaryExpressionTree tree = BinaryExpressionTree.Create(request.expression))
         {
             double evaluationResult = 0.0d;
             try
             {
-                evaluationResult = await Task.Run(() => tree.Evaluate(), cancellationToken);
+                evaluationResult = await Task.Run(() => tree.Evaluate(_operationService), cancellationToken);
 
             }
-            finally 
+            finally
             {
                 foreach (var item in tree.GetDomainEvents())
                 {
                     await _publisher.Publish(item);
                 }
                 tree.ClearDomainEvents();
-            }            
+            }
 
-            
+
             return evaluationResult;
         }
     }

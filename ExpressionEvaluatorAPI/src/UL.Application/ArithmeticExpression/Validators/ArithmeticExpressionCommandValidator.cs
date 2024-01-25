@@ -1,24 +1,18 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UL.Application.Expression.Command;
+using UL.Application.ArithmeticExpression.Command;
 using UL.Shared.RegexPatterns;
 using UL.Shared.Resources;
 
-namespace UL.Application.Expression.Validators;
-public class ExpressionCommandValidator : AbstractValidator<EvaluateTreeExpressionCommand>
+namespace UL.Application.ArithmeticExpression.Validators;
+public class ArithmeticExpressionCommandValidator : AbstractValidator<EvaluateArithmeticExpressionCommand>
 {
-    public ExpressionCommandValidator()
+    public ArithmeticExpressionCommandValidator()
     {
         RuleFor(command => command.expression)
             .NotNull()
             .WithErrorCode(ValidationErrorCodesResource.Not_Null);
-        
+
         RuleFor(command => command.expression)
             .NotEmpty()
             .WithErrorCode(ValidationErrorCodesResource.Not_Empty);

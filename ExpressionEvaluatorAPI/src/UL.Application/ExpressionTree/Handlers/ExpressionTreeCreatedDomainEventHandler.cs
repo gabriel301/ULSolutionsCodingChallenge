@@ -1,14 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UL.Application.Resources;
 using UL.Domain.Events.ExpressionTree.Created;
 
-namespace UL.Application.Expression.Handlers;
+namespace UL.Application.ExpressionTree.Handlers;
 public sealed class ExpressionTreeCreatedDomainEventHandler : INotificationHandler<ExpressionTreeCreatedEvent>
 {
 

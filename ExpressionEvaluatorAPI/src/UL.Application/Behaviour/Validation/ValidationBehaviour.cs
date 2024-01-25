@@ -1,10 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UL.Application.Abstractions.Command;
 using UL.Application.Exceptions;
 
@@ -22,7 +17,7 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if(!_validators.Any()) 
+        if (!_validators.Any())
         {
             return await next();
         }
@@ -32,7 +27,7 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
         var errors = _validators.Select(validator => validator.Validate(context))
                                 .Where(result => result.Errors.Any())
                                 .SelectMany(result => result.Errors)
-                                .Select(error => new ValidationError(error.PropertyName,error.ErrorMessage))
+                                .Select(error => new ValidationError(error.PropertyName, error.ErrorMessage))
                                 .ToList();
 
         if (errors.Any())

@@ -1,25 +1,17 @@
-﻿using FluentAssertions;
-using FluentValidation.TestHelper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using UL.Application.Expression.Command;
-using UL.Application.Expression.Validators;
-using UL.Domain.Exceptions;
+﻿using FluentValidation.TestHelper;
+using UL.Application.ExpressionTree.Command;
+using UL.Application.ExpressionTree.Validators;
 using UL.Shared.Resources;
 
 namespace UL.Tests.Application.Application.Validation;
-public class ExpressionCommandValidatorTest
+public class ExpressionTreeCommandValidatorTest
 {
-    private ExpressionCommandValidator _validator;
+    private ExpressionTreeCommandValidator _validator;
 
     #region Setup
-    public ExpressionCommandValidatorTest()
+    public ExpressionTreeCommandValidatorTest()
     {
-        _validator = new ExpressionCommandValidator();
+        _validator = new ExpressionTreeCommandValidator();
     }
 
     #endregion
@@ -94,8 +86,8 @@ public class ExpressionCommandValidatorTest
     #endregion
 
     #region Tests
-    [Fact (DisplayName = nameof(IsNullString))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Fact(DisplayName = nameof(IsNullString))]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     public void IsNullString()
     {
 
@@ -107,8 +99,8 @@ public class ExpressionCommandValidatorTest
 
     }
 
-    [Theory (DisplayName = nameof(IsEmptyString))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Theory(DisplayName = nameof(IsEmptyString))]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     [MemberData(nameof(EmptyValues))]
     public void IsEmptyString(EvaluateTreeExpressionCommand command)
     {
@@ -120,7 +112,7 @@ public class ExpressionCommandValidatorTest
     }
 
     [Theory(DisplayName = nameof(ContainsInvalidCharacters))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     [MemberData(nameof(InvalidCharactersExpressions))]
     public void ContainsInvalidCharacters(EvaluateTreeExpressionCommand command)
     {
@@ -133,7 +125,7 @@ public class ExpressionCommandValidatorTest
 
 
     [Theory(DisplayName = nameof(SequentialOperatorsExpressions))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     [MemberData(nameof(SequentialOperatorsExpressions))]
     public void ContainsSequentialOperators(EvaluateTreeExpressionCommand command)
     {
@@ -145,7 +137,7 @@ public class ExpressionCommandValidatorTest
     }
 
     [Theory(DisplayName = nameof(StartsOrEndsWithOperatorsExpressions))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     [MemberData(nameof(StartsOrEndsWithOperatorsExpressions))]
     public void StartsOrEndsWithOperators(EvaluateTreeExpressionCommand command)
     {
@@ -157,7 +149,7 @@ public class ExpressionCommandValidatorTest
     }
 
     [Theory(DisplayName = nameof(ContainsOnlyDigitsExpressions))]
-    [Trait("Application", "ExpressionCommandValidator")]
+    [Trait("Application", "ExpressionTreeCommandValidator")]
     [MemberData(nameof(ContainsOnlyDigitsExpressions))]
     public void ConatinsOnlyDigits(EvaluateTreeExpressionCommand command)
     {

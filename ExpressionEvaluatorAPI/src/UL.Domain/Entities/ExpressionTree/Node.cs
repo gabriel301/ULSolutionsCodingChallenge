@@ -1,6 +1,6 @@
 ﻿using UL.Domain.Enumeration;
 
-namespace UL.Domain.Entities.Expression;
+namespace UL.Domain.Entities.ExpressionTree;
 public class Node : IDisposable, IEquatable<Node>
 {
 
@@ -33,17 +33,17 @@ public class Node : IDisposable, IEquatable<Node>
 
     public void SetParent(Node? parent)
     {
-        this.ParentNode = parent;
+        ParentNode = parent;
     }
 
     public void SetLeftChild(Node? child)
     {
-        this.LeftChild = child;
+        LeftChild = child;
     }
 
     public void SetRightChild(Node? child)
     {
-        this.RightChild = child;
+        RightChild = child;
     }
 
     public bool HasParent()
@@ -85,9 +85,9 @@ public class Node : IDisposable, IEquatable<Node>
 
     public bool Equals(Node? other)
     {
-        if (other == null || object.Equals(other, default)) return false;
+        if (other == null || Equals(other, default)) return false;
 
-        return this._id!.Equals(other._id);
+        return _id!.Equals(other._id);
     }
 
     public override int GetHashCode()

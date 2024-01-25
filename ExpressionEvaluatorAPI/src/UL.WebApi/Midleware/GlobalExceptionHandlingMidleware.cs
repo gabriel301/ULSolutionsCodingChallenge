@@ -32,7 +32,7 @@ public class GlobalExceptionHandlingMidleware : IExceptionFilter
             details.Status = StatusCodes.Status422UnprocessableEntity;
             details.Detail = exception.Message;
         }
-        else if (exception is ApplicationValidationException) 
+        else if (exception is ApplicationValidationException)
         {
             details.Status = StatusCodes.Status400BadRequest;
             var casted = (ApplicationValidationException)exception;
