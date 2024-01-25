@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 using UL.Application.Abstractions.Command;
 
 namespace UL.Application.Expression.Command;
-public record EvaluateExpressionCommand(string expression) : ICommand<double>;
+public record EvaluateTreeExpressionCommand(string expression) : ICommand<double>;

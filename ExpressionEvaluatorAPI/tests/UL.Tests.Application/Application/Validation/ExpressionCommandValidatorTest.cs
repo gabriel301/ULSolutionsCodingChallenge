@@ -25,69 +25,69 @@ public class ExpressionCommandValidatorTest
     #endregion
 
     #region Theory Data
-    public static TheoryData<EvaluateExpressionCommand> EmptyValues =>
-     new TheoryData<EvaluateExpressionCommand>
+    public static TheoryData<EvaluateTreeExpressionCommand> EmptyValues =>
+     new TheoryData<EvaluateTreeExpressionCommand>
      {
-            new EvaluateExpressionCommand(""),
-            new EvaluateExpressionCommand("  "),
-            new EvaluateExpressionCommand("     ")
+            new EvaluateTreeExpressionCommand(""),
+            new EvaluateTreeExpressionCommand("  "),
+            new EvaluateTreeExpressionCommand("     ")
 
      };
 
 
-    public static TheoryData<EvaluateExpressionCommand> InvalidCharactersExpressions =>
-     new TheoryData<EvaluateExpressionCommand>
+    public static TheoryData<EvaluateTreeExpressionCommand> InvalidCharactersExpressions =>
+     new TheoryData<EvaluateTreeExpressionCommand>
      {
-            new EvaluateExpressionCommand("A+1+3"),
-            new EvaluateExpressionCommand("1+2=3"),
-            new EvaluateExpressionCommand("1.1+2+3"),
-            new EvaluateExpressionCommand("1 + 1"),
-            new EvaluateExpressionCommand("1  +1"),
-            new EvaluateExpressionCommand("1+1!2")
+            new EvaluateTreeExpressionCommand("A+1+3"),
+            new EvaluateTreeExpressionCommand("1+2=3"),
+            new EvaluateTreeExpressionCommand("1.1+2+3"),
+            new EvaluateTreeExpressionCommand("1 + 1"),
+            new EvaluateTreeExpressionCommand("1  +1"),
+            new EvaluateTreeExpressionCommand("1+1!2")
 
      };
 
-    public static TheoryData<EvaluateExpressionCommand> SequentialOperatorsExpressions =>
-    new TheoryData<EvaluateExpressionCommand>
+    public static TheoryData<EvaluateTreeExpressionCommand> SequentialOperatorsExpressions =>
+    new TheoryData<EvaluateTreeExpressionCommand>
     {
-            new EvaluateExpressionCommand("++1+2"),
-            new EvaluateExpressionCommand("--1+2"),
-            new EvaluateExpressionCommand("//1+1"),
-            new EvaluateExpressionCommand("**1+2"),
-            new EvaluateExpressionCommand("1+-2"),
-            new EvaluateExpressionCommand("1-*2"),
-            new EvaluateExpressionCommand("1-*+/-2"),
-            new EvaluateExpressionCommand("1-2+-")
+            new EvaluateTreeExpressionCommand("++1+2"),
+            new EvaluateTreeExpressionCommand("--1+2"),
+            new EvaluateTreeExpressionCommand("//1+1"),
+            new EvaluateTreeExpressionCommand("**1+2"),
+            new EvaluateTreeExpressionCommand("1+-2"),
+            new EvaluateTreeExpressionCommand("1-*2"),
+            new EvaluateTreeExpressionCommand("1-*+/-2"),
+            new EvaluateTreeExpressionCommand("1-2+-")
 
     };
 
 
-    public static TheoryData<EvaluateExpressionCommand> StartsOrEndsWithOperatorsExpressions =>
-    new TheoryData<EvaluateExpressionCommand>
+    public static TheoryData<EvaluateTreeExpressionCommand> StartsOrEndsWithOperatorsExpressions =>
+    new TheoryData<EvaluateTreeExpressionCommand>
     {
-            new EvaluateExpressionCommand("+1+2"),
-            new EvaluateExpressionCommand("-1+2-"),
-            new EvaluateExpressionCommand("/1+1"),
-            new EvaluateExpressionCommand("*1+2"),
-            new EvaluateExpressionCommand("1+2-"),
-            new EvaluateExpressionCommand("1+2*"),
-            new EvaluateExpressionCommand("+1-2-"),
-            new EvaluateExpressionCommand("-"),
-            new EvaluateExpressionCommand("+"),
-            new EvaluateExpressionCommand("/"),
-            new EvaluateExpressionCommand("*")
+            new EvaluateTreeExpressionCommand("+1+2"),
+            new EvaluateTreeExpressionCommand("-1+2-"),
+            new EvaluateTreeExpressionCommand("/1+1"),
+            new EvaluateTreeExpressionCommand("*1+2"),
+            new EvaluateTreeExpressionCommand("1+2-"),
+            new EvaluateTreeExpressionCommand("1+2*"),
+            new EvaluateTreeExpressionCommand("+1-2-"),
+            new EvaluateTreeExpressionCommand("-"),
+            new EvaluateTreeExpressionCommand("+"),
+            new EvaluateTreeExpressionCommand("/"),
+            new EvaluateTreeExpressionCommand("*")
 
     };
 
 
-    public static TheoryData<EvaluateExpressionCommand> ContainsOnlyDigitsExpressions =>
-    new TheoryData<EvaluateExpressionCommand>
+    public static TheoryData<EvaluateTreeExpressionCommand> ContainsOnlyDigitsExpressions =>
+    new TheoryData<EvaluateTreeExpressionCommand>
     {
-            new EvaluateExpressionCommand("0"),
-            new EvaluateExpressionCommand("1"),
-            new EvaluateExpressionCommand("12"),
-            new EvaluateExpressionCommand("123"),
-            new EvaluateExpressionCommand("12345")
+            new EvaluateTreeExpressionCommand("0"),
+            new EvaluateTreeExpressionCommand("1"),
+            new EvaluateTreeExpressionCommand("12"),
+            new EvaluateTreeExpressionCommand("123"),
+            new EvaluateTreeExpressionCommand("12345")
 
     };
 
@@ -99,7 +99,7 @@ public class ExpressionCommandValidatorTest
     public void IsNullString()
     {
 
-        var command = new EvaluateExpressionCommand(null);
+        var command = new EvaluateTreeExpressionCommand(null);
 
         var result = _validator.TestValidate(command);
         result.ShouldHaveAnyValidationError()
@@ -110,7 +110,7 @@ public class ExpressionCommandValidatorTest
     [Theory (DisplayName = nameof(IsEmptyString))]
     [Trait("Application", "ExpressionCommandValidator")]
     [MemberData(nameof(EmptyValues))]
-    public void IsEmptyString(EvaluateExpressionCommand command)
+    public void IsEmptyString(EvaluateTreeExpressionCommand command)
     {
 
         var result = _validator.TestValidate(command);
@@ -122,7 +122,7 @@ public class ExpressionCommandValidatorTest
     [Theory(DisplayName = nameof(ContainsInvalidCharacters))]
     [Trait("Application", "ExpressionCommandValidator")]
     [MemberData(nameof(InvalidCharactersExpressions))]
-    public void ContainsInvalidCharacters(EvaluateExpressionCommand command)
+    public void ContainsInvalidCharacters(EvaluateTreeExpressionCommand command)
     {
 
         var result = _validator.TestValidate(command);
@@ -135,7 +135,7 @@ public class ExpressionCommandValidatorTest
     [Theory(DisplayName = nameof(SequentialOperatorsExpressions))]
     [Trait("Application", "ExpressionCommandValidator")]
     [MemberData(nameof(SequentialOperatorsExpressions))]
-    public void ContainsSequentialOperators(EvaluateExpressionCommand command)
+    public void ContainsSequentialOperators(EvaluateTreeExpressionCommand command)
     {
 
         var result = _validator.TestValidate(command);
@@ -147,7 +147,7 @@ public class ExpressionCommandValidatorTest
     [Theory(DisplayName = nameof(StartsOrEndsWithOperatorsExpressions))]
     [Trait("Application", "ExpressionCommandValidator")]
     [MemberData(nameof(StartsOrEndsWithOperatorsExpressions))]
-    public void StartsOrEndsWithOperators(EvaluateExpressionCommand command)
+    public void StartsOrEndsWithOperators(EvaluateTreeExpressionCommand command)
     {
 
         var result = _validator.TestValidate(command);
@@ -159,7 +159,7 @@ public class ExpressionCommandValidatorTest
     [Theory(DisplayName = nameof(ContainsOnlyDigitsExpressions))]
     [Trait("Application", "ExpressionCommandValidator")]
     [MemberData(nameof(ContainsOnlyDigitsExpressions))]
-    public void ConatinsOnlyDigits(EvaluateExpressionCommand command)
+    public void ConatinsOnlyDigits(EvaluateTreeExpressionCommand command)
     {
 
         var result = _validator.TestValidate(command);

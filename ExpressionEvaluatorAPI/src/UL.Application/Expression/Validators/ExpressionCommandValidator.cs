@@ -11,7 +11,7 @@ using UL.Shared.RegexPatterns;
 using UL.Shared.Resources;
 
 namespace UL.Application.Expression.Validators;
-public class ExpressionCommandValidator : AbstractValidator<EvaluateExpressionCommand>
+public class ExpressionCommandValidator : AbstractValidator<EvaluateTreeExpressionCommand>
 {
     public ExpressionCommandValidator()
     {

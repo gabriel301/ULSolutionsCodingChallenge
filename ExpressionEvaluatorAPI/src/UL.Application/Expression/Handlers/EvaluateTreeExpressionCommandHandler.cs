@@ -9,16 +9,16 @@ using UL.Application.Expression.Command;
 using UL.Entities.Expression;
 
 namespace UL.Application.Expression.Handlers;
-public sealed class EvaluateExpressionCommandHandler : ICommandHandler<EvaluateExpressionCommand, double>
+public sealed class EvaluateTreeExpressionCommandHandler : ICommandHandler<EvaluateTreeExpressionCommand, double>
 {
     private readonly IPublisher _publisher;
 
-    public EvaluateExpressionCommandHandler(IPublisher publisher)
+    public EvaluateTreeExpressionCommandHandler(IPublisher publisher)
     {
         this._publisher = publisher;
     }
 
-    public async Task<double> Handle(EvaluateExpressionCommand request, CancellationToken cancellationToken)
+    public async Task<double> Handle(EvaluateTreeExpressionCommand request, CancellationToken cancellationToken)
     {
         //Using block ensures dispose method will be called
         using (ExpressionTree tree = ExpressionTree.Create(request.expression)) 

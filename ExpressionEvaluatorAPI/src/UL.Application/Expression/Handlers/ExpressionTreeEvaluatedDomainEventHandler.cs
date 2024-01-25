@@ -9,11 +9,11 @@ using UL.Application.Resources;
 using UL.Domain.Events.ExpressionTree.Evaluated;
 
 namespace UL.Application.Expression.Handlers;
-public sealed class ExpressionEvaluatedDomainEventHandler : INotificationHandler<ExpressionTreeEvaluatedEvent>
+public sealed class ExpressionTreeEvaluatedDomainEventHandler : INotificationHandler<ExpressionTreeEvaluatedEvent>
 {
-    private readonly ILogger<ExpressionCreatedDomainEventHandler> _logger;
+    private readonly ILogger<ExpressionTreeCreatedDomainEventHandler> _logger;
 
-    public ExpressionEvaluatedDomainEventHandler(ILogger<ExpressionCreatedDomainEventHandler> logger)
+    public ExpressionTreeEvaluatedDomainEventHandler(ILogger<ExpressionTreeCreatedDomainEventHandler> logger)
     {
         _logger = logger;
     }
