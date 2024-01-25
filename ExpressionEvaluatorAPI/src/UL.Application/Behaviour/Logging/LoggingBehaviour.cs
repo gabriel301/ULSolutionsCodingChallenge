@@ -37,7 +37,7 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         }
         catch (Exception exception) 
         {
-            _logger.LogError(exception, LoggingTemplateResources.Request_Falied, requestName);
+            _logger.LogError(exception, LoggingTemplateResources.Request_Falied, requestName,exception);
             throw;
         }
 

@@ -14,7 +14,12 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         //Removing server name from response header
-        builder.WebHost.ConfigureKestrel(config => config.AddServerHeader = false);
+        //Enforce TLS 3
+        builder.WebHost.ConfigureKestrel(config => 
+        {
+            config.AddServerHeader = false;
+            config.ConfigureHttpsDefaults(x => x.SslProtocols = System.Security.Authentication.SslProtocols.Tls13);
+        });
 
         builder.Host.UseSerilog((context, loggerConfig) =>
         loggerConfig.ReadFrom.Configuration(context.Configuration));
@@ -24,19 +29,19 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.RegisterApplicationDependencies();
         builder.Services.AddApiVersioning(options => 
-                                          {
-                                              options.DefaultApiVersion = new ApiVersion(1);
-                                              options.ReportApiVersions = true;
-                                              options.ApiVersionReader = new UrlSegmentApiVersionReader();
-                                              options.AssumeDefaultVersionWhenUnspecified = true;
-                                              options.UnsupportedApiVersionStatusCode = StatusCodes.Status404NotFound;
-                                          })
-                                        .AddMvc()
-                                        .AddApiExplorer(options =>
-                                        {
-                                            options.GroupNameFormat = "'v'V";
-                                            options.SubstituteApiVersionInUrl = true;
-                                        });
+        {
+            options.DefaultApiVersion = new ApiVersion(1);
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.UnsupportedApiVersionStatusCode = StatusCodes.Status404NotFound;
+        })
+        .AddMvc()
+        .AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'V";
+            options.SubstituteApiVersionInUrl = true;
+        });
 
         builder.Services.AddRateLimiter( options => 
         {

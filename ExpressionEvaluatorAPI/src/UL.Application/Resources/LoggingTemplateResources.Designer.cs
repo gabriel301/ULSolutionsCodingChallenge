@@ -79,7 +79,7 @@ namespace UL.Application.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Request {RequestName} processing failed.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Request {RequestName} processing failed. {@exception}.
         /// </summary>
         internal static string Request_Falied {
             get {

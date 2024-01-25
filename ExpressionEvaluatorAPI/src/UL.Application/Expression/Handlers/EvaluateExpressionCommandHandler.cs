@@ -23,12 +23,19 @@ public sealed class EvaluateExpressionCommandHandler : ICommandHandler<EvaluateE
         //Using block ensures dispose method will be called
         using (ExpressionTree tree = ExpressionTree.Create(request.expression)) 
         {
-            var evaluationResult = await Task.Run(() => tree.Evaluate(), cancellationToken);
-
-            foreach (var item in tree.GetDomainEvents())
+            double evaluationResult = 0.0d;
+            try
             {
-                await _publisher.Publish(item);
+                evaluationResult = await Task.Run(() => tree.Evaluate(), cancellationToken);
+
             }
+            finally 
+            {
+                foreach (var item in tree.GetDomainEvents())
+                {
+                    await _publisher.Publish(item);
+                }
+            }            
 
             tree.ClearDomainEvents();
             return evaluationResult;

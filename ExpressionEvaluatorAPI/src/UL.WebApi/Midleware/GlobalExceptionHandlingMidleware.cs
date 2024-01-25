@@ -8,6 +8,14 @@ namespace UL.WebApi.Midleware;
 
 public class GlobalExceptionHandlingMidleware : IExceptionFilter
 {
+
+    private readonly ILogger<GlobalExceptionHandlingMidleware> _logger;
+
+    public GlobalExceptionHandlingMidleware(ILogger<GlobalExceptionHandlingMidleware> logger)
+    {
+        _logger = logger;
+    }
+
     public void OnException(ExceptionContext context)
     {
         var details = new ProblemDetails();

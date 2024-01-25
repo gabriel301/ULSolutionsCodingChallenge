@@ -124,7 +124,7 @@
     <value>Executing request {RequestName}</value>
   </data>
   <data name="Request_Falied" xml:space="preserve">
-    <value>Request {RequestName} processing failed</value>
+    <value>Request {RequestName} processing failed. {@exception}</value>
   </data>
   <data name="Request_Processed" xml:space="preserve">
     <value>Request {RequestName} processed successfully</value>
