@@ -34,16 +34,16 @@ jobs:
     - name: Build
       run: dotnet build  ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
     - name: Test
-      run: dotnet test  ${{ env.SOLUTION_PATH }} --logger "trx;LogFileName=test-results.trx" --configuration Release  --no-restore --no-build --verbosity normal
+      run: dotnet test  ${{ env.SOLUTION_PATH }} --configuration Release  --no-restore --no-build --verbosity normal #--logger "trx;LogFileName=test-results.trx" 
     - name: Publish
       run: dotnet publish ${{ env.SOLUTION_PATH }} --configuration Release  --no-restore --no-build 
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: xUnit Tests
-        path: "**/test-results.trx"
-        reporter: dotnet-trx
-        fail-on-error: true
+    # - name: Test Report
+    #   uses: dorny/test-reporter@v1
+    #   if: always()
+    #   with:
+    #     name: xUnit Tests
+    #     path: "**/test-results.trx"
+    #     reporter: dotnet-trx
+    #     fail-on-error: true
 
       
