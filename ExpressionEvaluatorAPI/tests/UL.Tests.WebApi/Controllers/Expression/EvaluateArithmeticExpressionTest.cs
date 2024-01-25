@@ -147,7 +147,7 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
 
     [Fact(DisplayName = nameof(RateLimitTest))]
     [Trait("WebApi", "EvaluateArithmeticExpression")]
-    public void RateLimitTest()
+    public async Task RateLimitTest()
     {
 
         var expression = JsonConvert.SerializeObject("1+1+1");
@@ -178,6 +178,8 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
 
+        //Necessary to get the rate window limit back for other tests
+        await Task.Delay(2000);
     }
     #endregion
 }

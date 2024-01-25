@@ -144,7 +144,7 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
 
     [Fact(DisplayName = nameof(RateLimitTest))]
     [Trait("WebApi", "EvaluateTreeExpression")]
-    public void RateLimitTest()
+    public async Task RateLimitTest()
     {
 
         var expression = JsonConvert.SerializeObject("1+1+1");
@@ -174,6 +174,8 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
         successRequestsCount.Should().BeInRange(395, 400);
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeInRange(590, 600);
+
+        await Task.Delay(2000);
     }
 
 
