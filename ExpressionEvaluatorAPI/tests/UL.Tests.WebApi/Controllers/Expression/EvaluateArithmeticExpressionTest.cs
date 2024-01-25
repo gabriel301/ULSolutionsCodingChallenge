@@ -145,41 +145,41 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
     }
 
 
-    //[Fact(DisplayName = nameof(RateLimitTest))]
-    //[Trait("WebApi", "EvaluateArithmeticExpression")]
-    //public async Task RateLimitTest()
-    //{
+    [Fact(DisplayName = nameof(RateLimitTest))]
+    [Trait("WebApi", "EvaluateArithmeticExpression")]
+    public async Task RateLimitTest()
+    {
 
-    //    var expression = JsonConvert.SerializeObject("1+1+1");
+        var expression = JsonConvert.SerializeObject("1+1+1");
 
-    //    var testScenario = NBomber.CSharp.Scenario.Create("Rate Limit Scenario", async contex =>
-    //    {
-    //        var request = Http.CreateRequest("POST", _apiUrl)
-    //                    .WithBody(new StringContent(expression, Encoding.UTF8, System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json")));
+        var testScenario = NBomber.CSharp.Scenario.Create("Rate Limit Scenario", async contex =>
+        {
+            var request = Http.CreateRequest("POST", _apiUrl)
+                        .WithBody(new StringContent(expression, Encoding.UTF8, System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json")));
 
-    //        var response = await Http.Send(HttpClient, request);
+            var response = await Http.Send(HttpClient, request);
 
 
-    //        return response;
-    //    })
-    //    .WithoutWarmUp()
-    //    .WithLoadSimulations(Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(2)));
+            return response;
+        })
+        .WithoutWarmUp()
+        .WithLoadSimulations(Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(2)));
 
-    //    var result = NBomber.CSharp.NBomberRunner
-    //        .RegisterScenarios(testScenario)
-    //        .Run();
+        var result = NBomber.CSharp.NBomberRunner
+            .RegisterScenarios(testScenario)
+            .Run();
 
-    //    var scenarioStats = result.GetScenarioStats("Rate Limit Scenario");
-    //    var successRequestsCount = scenarioStats.AllOkCount;
+        var scenarioStats = result.GetScenarioStats("Rate Limit Scenario");
+        var successRequestsCount = scenarioStats.AllOkCount;
 
-    //    var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
+        var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
 
-    //    successRequestsCount.Should().BeGreaterThan(0);
-    //    tooManyRequestsCount.Should().NotBeNull();
-    //    tooManyRequestsCount!.Count.Should().BeGreaterThan(0);
+        successRequestsCount.Should().BeGreaterThan(0);
+        tooManyRequestsCount.Should().NotBeNull();
+        tooManyRequestsCount!.Count.Should().BeGreaterThan(0);
 
-    //    //Necessary to get the rate window limit back for other tests
-    //    await Task.Delay(2000);
-    //}
+        //Necessary to get the rate window limit back for other tests
+        await Task.Delay(2000);
+    }
     #endregion
 }
