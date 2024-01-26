@@ -60,37 +60,26 @@ public sealed class ArithmeticExpressionEvaluator : Entity, IExpressionEvaluator
 
         Stack<double> operandStack = new Stack<double>();
         Stack<string> operatorStack = new Stack<string>();
-        var evaluatedExpression = Expression.Substring(0);
+        var evaluatedExpression = Regex.Split(Expression, EvaluationPatterns.ONLY_OPERATORS);
+        var subExpression = string.Empty;
+        var enumerator = evaluatedExpression.GetEnumerator();
 
-        int precedences = Regex.Matches(evaluatedExpression, EvaluationPatterns.MATCH_ALL_MULTIPLICATION_OR_DIVISION).Count;
-        while (evaluatedExpression.Length > 0)
+        while(enumerator.MoveNext()) 
         {
-            var match = Regex.Match(evaluatedExpression, EvaluationPatterns.FIRST_PART_DIGIT);
-            if (match.Length > 0)
+
+            subExpression = enumerator.Current.ToString();
+            if (subExpression!.Contains('+') || subExpression!.Contains('-'))
             {
-                operandStack.Push(double.Parse(match.Value));
-                evaluatedExpression = evaluatedExpression.Substring(match.Index + match.Length);
+                operatorStack.Push(subExpression);
                 continue;
             }
 
-            match = Regex.Match(evaluatedExpression, EvaluationPatterns.FIRST_PART_SUM_OR_SUBTRACTION);
-
-            if (match.Length > 0)
+            if (subExpression.Contains('*') || subExpression.Contains('/'))
             {
-                operatorStack.Push(match.Value);
-                evaluatedExpression = evaluatedExpression.Substring(match.Index + match.Length);
-                continue;
-            }
-
-            match = Regex.Match(evaluatedExpression, EvaluationPatterns.FIRST_PART_MULTIPLICATION_OR_DIVISION);
-
-            if (match.Length > 0)
-            {
-                operatorStack.Push(match.Value);
-                evaluatedExpression = evaluatedExpression.Substring(match.Index + match.Length);
-                match = Regex.Match(evaluatedExpression, EvaluationPatterns.FIRST_PART_DIGIT);
-                operandStack.Push(double.Parse(match.Value));
-                evaluatedExpression = evaluatedExpression.Substring(match.Index + match.Length);
+                operatorStack.Push(subExpression);
+                enumerator.MoveNext();
+                subExpression = enumerator.Current.ToString();
+                operandStack.Push(double.Parse(subExpression!));
                 var operand2 = operandStack.Pop();
                 var operand1 = operandStack.Pop();
                 var arithmeticOperator = operatorStack.Pop();
@@ -103,8 +92,11 @@ public sealed class ArithmeticExpressionEvaluator : Entity, IExpressionEvaluator
 
                 operandStack.Push(operationResult);
 
+                continue;
             }
-
+            
+            operandStack.Push(double.Parse(subExpression));
+           
         }
 
         if (operandStack.Count == 1)
