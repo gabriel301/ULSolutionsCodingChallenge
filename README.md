@@ -37,4 +37,11 @@ Unit testing was implemented using xUnit and NBomber (for WebApi):
  2. **UL Application Tests** - Contains use case testing, such as validations and expression evaluation results.
  3. **UL WebApi Tests** - Functional tests, such as API response codes, expression evaluation results and rate limit tests.
 
+### Github Actions
+An action is configured to trigger on push or pull request in the main branch.
 
+#### Domain
+Domain implements 2 different algorithms for evaluating expressions:
+
+ 1. **Binary Expression Tree** - Using regular expressions, the string is parsed from right to left, looking for operators with less precedence. Thus, the last evaluated operator will be placed on the root of the tree. The algorithm process all the left subtrees first, the the right subtrees. Operators are root of subtrees and operands are leafs. For evaluating, a Depth First Search (DFS) algorithm was implemented. Two major drawbacks of this implementation are excessive memory usage for large trees, and long processing time due several object allocation (tree nodes) and regular expression evaluations.
+ 2. **Evaluation with stacks**: This algorithms uses a regular expressions to split the string in a list of strings, by arithmetic operators. Iterate through the list, processing multiplicatication and divisions first and then sums and subtrations, evaluating the expression string from left to right. Two stacks are used for storing operators and operands for later processing. This implementation solves those 2 drawbacks from Binary Expression Tree implementation.
