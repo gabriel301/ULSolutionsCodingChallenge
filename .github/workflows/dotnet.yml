@@ -6,8 +6,8 @@ name: UL Solutions Coding Challenge Pipeline
 on:
   pull_request:
     branches: [ "main" ]
-  push:
-    branches: [ "main" ]
+  #push:
+    #branches: [ "main" ]
 
 env:
   SOLUTION_PATH: ./ExpressionEvaluatorAPI/ExpressionEvaluatorAPI.sln
