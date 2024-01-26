@@ -145,7 +145,7 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
     }
 
 
-    [Fact(DisplayName = nameof(RateLimitTest))]
+    [Fact(DisplayName = nameof(RateLimitTest), Skip = "NBomber")]
     [Trait("WebApi", "EvaluateArithmeticExpression")]
     public async Task RateLimitTest()
     {
@@ -174,7 +174,7 @@ public class EvaluateArithmeticExpressionTest : CustomWebApplicationFactory
 
         var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
 
-        successRequestsCount.Should().BeGreaterThan(0);
+        successRequestsCount.Should().BeGreaterThan(350);
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeGreaterThan(0);
 
