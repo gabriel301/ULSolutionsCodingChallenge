@@ -48,7 +48,7 @@ Domain implements 2 different algorithms for evaluating expressions:
     
  1. **Evaluation with stacks**: This algorithms uses a regular expressions to split the string in a list of strings, by arithmetic operators. Iterate through the list, processing multiplicatication and divisions first and then sums and subtrations, evaluating the expression string from left to right. Two stacks are used for storing operators and operands for later processing. This implementation solves those 2 drawbacks from Binary Expression Tree implementation.
 
- 3. **Abstractions**: Both implementations uses an abstration (interface) of the operation services, that perform the arithmetic operations. It was implemented to showcase the Inversion of Control from SOLID. They are also implements an interface with the Evaluate method, following the Open Closed principle, Dependency Inversion principle and Interface segregation principle.
+ 3. **Abstractions**: Both implementations uses an abstration (interface) of the operation service, that perform the arithmetic operations. It was implemented to showcase the Inversion of Control from SOLID. They are also implements an interface with the Evaluate method, following the Open Closed principle, Dependency Inversion principle and Interface segregation principle.
 
 #### Application
 <p>Application implements an reduced version of the CQRS pattern (only 2 commands) using MediatR, for maitaining the Single Responsibilty Principle. Choosing MediatR allowed CQRS pattern implemention easier, and it also helped to implement event notifications thow INotification and INotificationHandler interfaces.</p>
