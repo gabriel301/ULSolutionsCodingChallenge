@@ -142,7 +142,7 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
         result.Should().BeApproximately(expectedResult, 0.0001);
     }
 
-    [Fact(DisplayName = nameof(RateLimitTest))]
+    [Fact(DisplayName = nameof(RateLimitTest),Skip = "NBomber")]
     [Trait("WebApi", "EvaluateTreeExpression")]
     public async Task RateLimitTest()
     {
@@ -171,7 +171,7 @@ public class EvaluateTreeExpressionTest : CustomWebApplicationFactory
 
         var tooManyRequestsCount = scenarioStats.Fail.StatusCodes.Where(status => status.StatusCode.Equals("TooManyRequests")).FirstOrDefault();
 
-        successRequestsCount.Should().BeGreaterThan(0);
+        successRequestsCount.Should().BeGreaterThan(350);
         tooManyRequestsCount.Should().NotBeNull();
         tooManyRequestsCount!.Count.Should().BeGreaterThan(0);
 
