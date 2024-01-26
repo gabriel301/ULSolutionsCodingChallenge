@@ -40,9 +40,21 @@ Unit testing was implemented using xUnit and NBomber (for WebApi):
 ### Github Actions
 An action is configured to trigger on push or pull request in the main branch.
 
+### Technical Decisions
 #### Domain
 Domain implements 2 different algorithms for evaluating expressions:
 
  1. **Binary Expression Tree** - Using regular expressions, the string is parsed from right to left, looking for operators with less precedence. Thus, the last evaluated operator will be placed on the root of the tree. The algorithm process all the left subtrees first, the the right subtrees. Operators are root of subtrees and operands are leafs. For evaluating, a Depth First Search (DFS) algorithm was implemented. Two major drawbacks of this implementation are excessive memory usage for large trees, and long processing time due several object allocation (tree nodes) and regular expression evaluations.
     
  1. **Evaluation with stacks**: This algorithms uses a regular expressions to split the string in a list of strings, by arithmetic operators. Iterate through the list, processing multiplicatication and divisions first and then sums and subtrations, evaluating the expression string from left to right. Two stacks are used for storing operators and operands for later processing. This implementation solves those 2 drawbacks from Binary Expression Tree implementation.
+
+ 3. **Abstractions**: Both implementations uses and abstration (interface) of the operation services, that perform the arithmetic operations. It was implemented to showcase the Inversion of Control from SOLID. They are also implements an interface with the Evaluate method, following the Open Closed principle, Dependency Inversion principle and Interface segregation principle.
+
+#### Application
+<p>Application implements an reduced version of the CQRS pattern (only 2 commands) using MediatR, for maitaining the Single Responsibilty Principle. Choosing MediatR allowed CQRS pattern implemention easier, and it also helped to implement event notifications thow INotification and INotificationHandler interfaces.</p>
+<p> Other interesing MediatR usecase is the pipeline behaviour feature. It allows inteceting an command handler call and perform operations before and after handler execution. Using this features, 2 pipeline behaviours were implemented:
+
+ 1. **Validation:** In case a command has validators associated (validators are injected via dependency injetcion), the handler call is intercepted and validation pipeline runs. In cash any validation fails, a validation exception is threw. Validators were implemented using Fluent Validation library.
+ 2. **Logging**: Handler executions is logged before and after the call. It is also logs exceptions.
+
+Application also implements the inteface of the operation service interface from domain project, following the Liskov substitution principle.</p>
