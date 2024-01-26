@@ -75,7 +75,8 @@ It also forces TLS 1.3 and it does not disclose server details (server header wa
 API implements a global exception handler to catch and treat exceptions, removing any internal information about implementation from messages and assigning the correct http status for each type of exception.
 
 **Logging** <br>
-Logging is implemented using Serilog library. It was configured to output logs to Console and a text file in logs folder, inside the execution program folder. This files stores logs in json format, to make it easy to export and query them in a structure manner in other tools like Elastic Search + Kibana.
+Logging is implemented using Serilog library. It was configured to output logs to Console and a text file in logs folder, inside the execution program folder. This files stores logs in json format, to make it easy to export and query them in a structure manner in other tools like Elastic Search + Kibana. API also includes a Serilog middleware that logs HTTP Requests.
+
 
 **Swaager** <br>
 Swagger is enabled when running in development enviroment. It lists both API versions.
