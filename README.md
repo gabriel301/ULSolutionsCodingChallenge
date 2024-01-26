@@ -67,15 +67,15 @@ It contains 2 API versions:
  1. **v1**: Uses the Binary Expression Tree Implementation
  2. **v2**: Uses Evalutation With Stacks implementation
 
-**API Security**
+**API Security** <br>
 Since API authentication was not required, it was not implemented. However API implements a rate limiting algorithm (fixed time window) to avoid DDoS attacks. <br>
 It also forces TLS 1.3 and it does not disclose server details (server header was removed). 
 
-**Global Exception Handler**
+**Global Exception Handler** <br>
 API implements a global exception handler to catch and treat exceptions, removing any internal information about implementation from messages and assigning the correct http status for each type of exception.
 
-**Logging**
+**Logging** <br>
 Logging is implemented using Serilog library. It was configured to output logs to Console and a text file in logs folder, inside the execution program folder. This files stores logs in json format, to make it easy to export and query them in a structure manner in other tools like Elastic Search + Kibana.
 
-**Swaager**
+**Swaager** <br>
 Swagger is enabled when running in development enviroment. It lists both API versions.
