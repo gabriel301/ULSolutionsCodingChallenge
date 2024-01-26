@@ -51,13 +51,13 @@ Domain implements 2 different algorithms for evaluating expressions:
  3. **Abstractions**: Both implementations uses an abstration (interface) of the operation service, that perform the arithmetic operations. It was implemented to showcase the Inversion of Control from SOLID. They are also implements an interface with the Evaluate method, following the Open Closed principle, Dependency Inversion principle and Interface segregation principle.
 
 #### Application
-<p>Application implements a reduced version of the CQRS pattern (only 2 commands) using MediatR, for maitaining the Single Responsibilty Principle. Choosing MediatR allowed CQRS pattern implemention easier, and it also helped to implement event notifications thow INotification and INotificationHandler interfaces.</p>
-<p> Other interesing MediatR usecase is the pipeline behaviour feature. It allows inteceting an command handler call and perform operations before and after handler execution. Using this features, 2 pipeline behaviours were implemented:
+<p>Application implements a reduced version of the CQRS pattern (only 2 commands) using MediatR, for maitaining the Single Responsibilty Principle. Choosing MediatR allowed CQRS pattern implemention easier, and it also helped to implement event notifications through INotification and INotificationHandler interfaces.</p>
+<p> Other interesing MediatR usecase is the pipeline behaviour feature. It allows intercepting a command handler call and perform operations before and after handler execution. Using this features, 2 pipeline behaviours were implemented:
 
- 1. **Validation:** In case a command has validators associated (validators are injected via dependency injetcion), the handler call is intercepted and validation pipeline runs. In cash any validation fails, a validation exception is threw. Validators were implemented using Fluent Validation library.
+ 1. **Validation:** In case a command has validators associated with it (validators are injected via dependency injetcion), the handler call is intercepted and the validation pipeline runs. If  any validation fails, a validation exception is threw. Validators were implemented using Fluent Validation library.
  2. **Logging**: Handler executions is logged before and after the call. It is also logs exceptions.
 
-Application also implements the inteface of the operation service interface from domain project, following the Liskov substitution principle.</p>
+Application also implements the operation service interface from domain project, following the Liskov substitution principle.</p>
 
 #### WebApi
 WebApi implements is an Asp.net core Web API project.
@@ -65,17 +65,17 @@ WebApi implements is an Asp.net core Web API project.
 It contains 2 API versions:
 
  1. **v1**: Uses the Binary Expression Tree Implementation
- 2. **v2**: Uses Evalutation With Stacks implementation
+ 2. **v2**: Uses the Evalutation With Stacks implementation
 
 **API Security** <br>
 Since API authentication was not required, it was not implemented. However API implements a rate limiting algorithm (fixed time window) to avoid DDoS attacks. <br>
-It also forces TLS 1.3 and it does not disclose server details (server header was removed). 
+It also enforces using TLS 1.3 and it does not disclose server details (server header was removed). 
 
 **Global Exception Handler** <br>
-API implements a global exception handler to catch and treat exceptions, removing any internal information about implementation from messages and assigning the correct http status for each type of exception.
+API implements a global exception handler to catch and treat exceptions, removing any internal information about implementation from exception messages and assigning the correct http status for each type of exception.
 
 **Logging** <br>
-Logging is implemented using Serilog library. It was configured to output logs to Console and a text file in logs folder, inside the execution program folder. This files stores logs in json format, to make it easy to export and query them in a structure manner in other tools like Elastic Search + Kibana. API also includes a Serilog middleware that logs HTTP Requests.
+Logging is implemented using Serilog library. It was configured to output logs to Console and a text file in logs folder, inside the execution program folder. This file stores logs in json format, to make it easier to export and query them in a structure manner in other tools like Elastic Search + Kibana. API also includes a Serilog middleware that logs HTTP Requests.
 
 
 **Swaager** <br>
